@@ -1,0 +1,88 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="form-container">
+    <div class="form-header">
+        <h2><i class="fas fa-calendar-check"></i> Form Pengajuan Reservasi Rapat</h2>
+        <p class="form-subtitle">Komisi Nasional Hak Asasi Manusia Republik Indonesia</p>
+    </div>
+
+    <form action="{{ url_for('ajukan_reservasi') }}" method="POST" enctype="multipart/form-data" class="reservation-form">
+        <div class="form-group">
+            <label><i class="fas fa-door-open"></i> Ruang Rapat</label>
+            <select name="ruangan" required>
+                <option value="">-- Pilih Ruangan --</option>
+                <option value="Ruang Rapat Utama">Ruang Rapat Utama (Lantai 2)</option>
+                <option value="Ruang Rapat Pleno 1">Ruang Rapat Pleno 1 (Lantai 3)</option>
+                <option value="Ruang Rapat Pleno 2">Ruang Rapat Pleno 2 (Lantai 3)</option>
+                <option value="Ruang Rapat Kelompok">Ruang Rapat Kelompok (Lantai 3)</option>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label><i class="fas fa-calendar-alt"></i> Tanggal Rapat</label>
+                <input type="date" name="tanggal" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-clock"></i> Waktu Mulai</label>
+                <input type="time" name="waktu_mulai" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-clock"></i> Waktu Selesai</label>
+                <input type="time" name="waktu_selesai" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label><i class="fas fa-file-alt"></i> Keperluan Rapat</label>
+            <textarea name="keperluan" rows="4" required placeholder="Jelaskan tujuan dan agenda rapat..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label><i class="fas fa-paperclip"></i> Lampiran (Opsional)</label>
+            <input type="file" 
+                   name="lampiran" 
+                   id="lampiran" 
+                   accept=".pdf,.doc,.docx,.jpg,.png"
+                   class="form-control">
+            <small class="form-text text-muted">
+                Format yang diperbolehkan: PDF, DOC, DOCX, JPG, PNG (Maks. 5MB)
+            </small>
+        </div>
+
+        <div class="form-footer">
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-paper-plane"></i> Ajukan Reservasi
+            </button>
+        </div>
+    </form>
+
+    <div class="form-note">
+        <p><i class="fas fa-info-circle"></i> Catatan:</p>
+        <ul>
+            <li>Reservasi harus diajukan minimal 1x24 jam sebelum waktu rapat</li>
+            <li>Pastikan ruangan yang dipilih tersedia pada waktu yang diinginkan</li>
+            <li>Status reservasi akan diinformasikan melalui sistem</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Flash message pop-up -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+        <div class="popup popup-{{ category }}">
+            <div class="popup-content">
+                {% if category == 'success' %}
+                    <span class="popup-icon">&#10004;</span> <!-- Tanda centang hijau -->
+                {% elif category == 'danger' %}
+                    <span class="popup-icon">&#10006;</span> <!-- Tanda silang merah -->
+                {% endif %}
+                <p class="popup-message">{{ message }}</p>
+            </div>
+        </div>
+    {% endfor %}
+{% endwith %}
+
+<!-- Include JavaScript untuk flash pop-up -->
+<script src="{{ url_for('static', filename='js/popup.js') }}"></script>
+{% endblock %}

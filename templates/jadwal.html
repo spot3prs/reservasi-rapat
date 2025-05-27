@@ -1,0 +1,42 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="dashboard-container">
+    <h2 class="dashboard-title">Jadwal Penggunaan Ruangan</h2>
+    <div class="table-section">
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Ruangan</th>
+                    <th>Tanggal</th>
+                    <th>Waktu</th>
+                    <th>Keperluan</th>
+                    <th>Pemesan</th>
+                    <th>Status</th>
+                </tr>
+            </thead>            
+            <tbody>
+                {% for jadwal in jadwal_list %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ jadwal['ruangan'] }}</td>
+                        <td>{{ jadwal['tanggal'] }}</td>
+                        <td>{{ jadwal['waktu_mulai'] }} - {{ jadwal['waktu_selesai'] }}</td>
+                        <td>{{ jadwal['keperluan'] }}</td>
+                        <td>{{ jadwal['nama_pemesan'] }}</td> <!-- Tambahan -->
+                        <td>
+                            <span class="status-badge status-{{ jadwal['status'] | lower | replace(' ', '-') }}">
+                                {{ jadwal['status'] }}
+                            </span>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align: center;">Belum ada jadwal terdaftar.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>                
+        </table>
+    </div>
+</div>
+{% endblock %}

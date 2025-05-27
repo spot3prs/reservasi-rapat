@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container-pegawai">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+        <h2 style="margin: 0;">Kelola Data Pegawai</h2>
+        <a href="{{ url_for('tambah_pegawai') }}" class="btn btn-primary" style="background:#003366; border-color:#003366;">Tambah Pegawai</a>
+    </div>
+    <div class="table-responsive">
+        <table class="pegawai-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nama</th>
+                    <th style="text-align: center;">Nomor Telepon</th>
+                    <th style="text-align: center;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in pegawai %}
+                <tr>
+                    <td>{{ p.id }}</td>
+                    <td>{{ p.nama }}</td>
+                    <td style="text-align: center;">{{ p.no_wa }}</td>
+                    <td style="text-align: center;">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Pilih Aksi
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('edit_pegawai', id=p.id) }}">Edit</a>
+                                </li>
+                                <li>
+                                    <form action="{{ url_for('hapus_pegawai', id=p.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus pegawai ini?')">
+                                        <button type="submit" class="dropdown-item text-danger">Hapus</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

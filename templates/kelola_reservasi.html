@@ -1,0 +1,241 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Pesan flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" style="margin-bottom: 18px;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div style="margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+        <h2 class="dashboard-title mb-1" style="font-size: 1.6rem; font-weight: 600; text-align: left; margin: 0;">
+            Manajemen Reservasi
+        </h2>
+        <form action="{{ url_for('kirim_pengingat_sekarang') }}" method="post" style="margin: 0;">
+            <button type="submit"
+                style="
+                    padding: 4px 14px;
+                    font-size: 0.95rem;
+                    border-radius: 4px;
+                    background: #2176ae;
+                    color: #fff;
+                    border: none;
+                    cursor: pointer;
+                    min-width: 0;
+                    box-shadow: 0 1px 4px rgba(33,118,174,0.07);
+                    transition: background 0.2s;
+                "
+                onmouseover="this.style.background='#185a8c'"
+                onmouseout="this.style.background='#2176ae'">
+                &#128276; Kirim Pengingat
+            </button>
+        </form>
+    </div>
+
+    <!-- Form Export Laporan -->
+    <form action="{{ url_for('export_laporan') }}" method="get" class="mb-3" style="margin-bottom:18px; display: flex; align-items: center; gap: 10px;">
+        <label for="start_date">Tanggal Mulai:</label>
+        <input type="date" id="start_date" name="start_date" required>
+        <label for="end_date">Tanggal Akhir:</label>
+        <input type="date" id="end_date" name="end_date" required>
+        <button type="submit" name="format" value="pdf" class="btn btn-danger" style="padding: 6px 18px; border-radius: 4px; background: #dc3545; color: #fff; border: none; cursor: pointer;">Export PDF</button>
+        <button type="submit" name="format" value="excel" class="btn btn-success" style="padding: 6px 18px; border-radius: 4px; background: #28a745; color: #fff; border: none; cursor: pointer;">Export Excel</button>
+    </form>
+
+    <!-- Search dan Filter -->
+    <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
+        <input type="text" id="searchInput" placeholder="Cari reservasi..." style="padding: 6px 12px; border-radius: 4px; border: 1px solid #ccc; min-width: 180px;">
+        <select id="statusFilter" style="padding: 6px 12px; border-radius: 4px; border: 1px solid #ccc; min-width: 140px;">
+            <option value="">Semua Status</option>
+            <option value="Menunggu">Menunggu</option>
+            <option value="Disetujui">Disetujui</option>
+            <option value="Ditolak">Ditolak</option>
+        </select>
+        <select id="ruanganFilter" style="padding: 6px 12px; border-radius: 4px; border: 1px solid #ccc; min-width: 140px;">
+            <option value="">Semua Ruangan</option>
+            {% for r in reservasi|map(attribute='nama_ruangan')|unique %}
+            <option value="{{ r }}">{{ r }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="table-responsive">
+        <!-- Form hanya untuk tombol pengingat dan checkbox -->
+        <form id="form-checkbox-pengingat" action="{{ url_for('kirim_pengingat_terpilih') }}" method="post" style="margin-bottom: 12px;">
+            <button id="btn-pengingat-terpilih" type="submit"
+                style="
+                    padding: 4px 10px;
+                    font-size: 0.95rem;
+                    border-radius: 4px;
+                    background: #2176ae;
+                    color: #fff;
+                    border: none;
+                    cursor: pointer;
+                    min-width: 0;
+                    width: auto;
+                    box-shadow: 0 1px 4px rgba(33,118,174,0.07);
+                    transition: background 0.2s;
+                    display: none; /* Awal: disembunyikan */
+                    align-items: center;
+                    gap: 6px;
+                    margin-bottom: 10px;
+                    white-space: nowrap;
+                "
+                onmouseover="this.style.background='#185a8c'"
+                onmouseout="this.style.background='#2176ae'">
+                <span style="font-size:1.1em;">&#10003;</span> Kirim Pengingat yang di beri tanda centang
+            </button>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="checkAll">
+                        </th>
+                        <th>ID</th>
+                        <th>Nama Pegawai</th>
+                        <th>Ruangan</th>
+                        <th>Tanggal</th>
+                        <th>Waktu Mulai</th>
+                        <th>Waktu Selesai</th>
+                        <th>Kegiatan</th>
+                        <th>Lampiran</th>  <!-- New column -->
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in reservasi %}
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="ids" value="{{ r.id }}">
+                        </td>
+                        <td>{{ r.id }}</td>
+                        <td>{{ r.nama }}</td>
+                        <td>{{ r.nama_ruangan }}</td>
+                        <td>{{ r.tanggal }}</td>
+                        <td>{{ r.waktu_mulai }}</td>
+                        <td>{{ r.waktu_selesai }}</td>
+                        <td>{{ r.kegiatan }}</td>
+                        <td>
+                            {% if r.lampiran %}
+                            <a href="{{ url_for('static', filename='uploads/' + r.lampiran) }}" 
+                               target="_blank"
+                               style="color: #2176ae; text-decoration: none;">
+                                <i class="fas fa-file-alt"></i> Lihat
+                            </a>
+                            {% else %}
+                            <span style="color: #999;">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="status {{ r.status|lower }}">{{ r.status }}</span>
+                        </td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Pilih Aksi
+                            </button>
+                            <ul class="dropdown-menu">
+                                {% if r.status == 'Menunggu' %}
+                                <li>
+                                    <form action="{{ url_for('setujui_reservasi', id=r.id) }}" method="post" style="display:inline;">
+                                        <button type="submit" class="dropdown-item text-success">Setujui</button>
+                                    </form>
+                                </li>
+                                <li>
+                                    <form action="{{ url_for('tolak_reservasi', id=r.id) }}" method="post" style="display:inline;">
+                                        <button type="submit" class="dropdown-item text-danger">Tolak</button>
+                                    </form>
+                                </li>
+                                {% endif %}
+                                <li>
+                                    <form action="{{ url_for('hapus_reservasi', id=r.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus reservasi ini?')">
+                                        <button type="submit" class="dropdown-item text-warning">Hapus</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const ruanganFilter = document.getElementById('ruanganFilter');
+    const table = document.querySelector('.styled-table tbody');
+
+    function filterTable() {
+        const search = searchInput.value.toLowerCase();
+        const status = statusFilter.value;
+        const ruangan = ruanganFilter.value;
+
+        for (const row of table.rows) {
+            const cells = row.getElementsByTagName('td');
+            const rowText = row.innerText.toLowerCase();
+            const statusText = cells[8]?.innerText.trim();
+            const ruanganText = cells[3]?.innerText.trim();
+
+            let show = true;
+            if (search && !rowText.includes(search)) show = false;
+            if (status && statusText !== status) show = false;
+            if (ruangan && ruanganText !== ruangan) show = false;
+
+            row.style.display = show ? '' : 'none';
+        }
+    }
+
+    searchInput.addEventListener('input', filterTable);
+    statusFilter.addEventListener('change', filterTable);
+    ruanganFilter.addEventListener('change', filterTable);
+
+    // Script untuk show/hide tombol pengingat terpilih
+    const btnPengingat = document.getElementById('btn-pengingat-terpilih');
+    const checkboxes = document.querySelectorAll('input[name="ids"]');
+    const checkAll = document.getElementById('checkAll');
+
+    function updateButtonVisibility() {
+        let checked = false;
+        for (const cb of checkboxes) {
+            if (cb.checked) {
+                checked = true;
+                break;
+            }
+        }
+        btnPengingat.style.display = checked ? 'inline-flex' : 'none';
+    }
+
+    checkboxes.forEach(cb => cb.addEventListener('change', updateButtonVisibility));
+    if (checkAll) checkAll.addEventListener('change', updateButtonVisibility);
+});
+
+document.getElementById('checkAll').onclick = function() {
+    var checkboxes = document.querySelectorAll('input[name="ids"]');
+    for (var checkbox of checkboxes) {
+        checkbox.checked = this.checked;
+    }
+
+    // Tampilkan atau sembunyikan tombol kirim pengingat terpilih
+    document.getElementById('btn-pengingat-terpilih').style.display = this.checked ? 'inline-flex' : 'none';
+};
+
+// Tampilkan atau sembunyikan tombol kirim pengingat terpilih saat checkbox individu diklik
+document.querySelectorAll('input[name="ids"]').forEach(function(checkbox) {
+    checkbox.addEventListener('change', function() {
+        const anyChecked = Array.from(document.querySelectorAll('input[name="ids"]')).some(chk => chk.checked);
+        document.getElementById('btn-pengingat-terpilih').style.display = anyChecked ? 'inline-flex' : 'none';
+    });
+});
+</script>
+{% endblock %}

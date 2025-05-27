@@ -1,0 +1,77 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2 style="text-align:center; color:#003366; margin-bottom:24px;">Kalender Jadwal Rapat</h2>
+    <div id="calendar"></div>
+</div>
+
+<!-- FullCalendar CSS & JS dari CDN -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+
+<style>
+  #calendar {
+    max-width: 950px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(0,51,102,0.10), 0 1.5px 6px rgba(0,51,102,0.08);
+    padding: 24px 16px 8px 16px;
+  }
+  .fc-toolbar-title {
+    color: #003366;
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+  .fc-button, .fc-button-primary {
+    background: #003366 !important;
+    border: none !important;
+    color: #fff !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    transition: background 0.2s;
+  }
+  .fc-button:hover, .fc-button-primary:hover {
+    background: #185a8c !important;
+  }
+  .fc-daygrid-event, .fc-event {
+    background: #2176ae !important;
+    border: none !important;
+    color: #fff !important;
+    border-radius: 6px !important;
+    padding: 2px 6px;
+    font-size: 0.97rem;
+  }
+  .fc-today {
+    background: #e6f0ff !important;
+  }
+  .fc-scrollgrid, .fc-view-harness {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      events: {{ events|tojson|safe }},
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      height: 650,
+      eventDisplay: 'block',
+      dayMaxEventRows: 3,
+      fixedWeekCount: false,
+      nowIndicator: true,
+      selectable: false,
+      eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false }
+    });
+    calendar.render();
+  });
+</script>
+{% endblock %}

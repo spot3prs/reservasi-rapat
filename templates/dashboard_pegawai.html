@@ -1,0 +1,52 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="welcome-section">
+        <h2>Selamat Datang, {{ session['nama'] }}</h2>
+        <p class="welcome-message">Silakan pilih layanan yang Anda butuhkan</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="popup popup-{{ category }}">
+                <div class="popup-content">
+                    {% if category == 'success' %}
+                        <span class="popup-icon">&#10004;</span> <!-- Tanda centang hijau -->
+                    {% elif category == 'danger' %}
+                        <span class="popup-icon">&#10006;</span> <!-- Tanda silang merah -->
+                    {% endif %}
+                    <p class="popup-message">{{ message }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    {% endwith %}
+
+    <div class="room-info">
+        <h3><i class="fas fa-building"></i> Informasi Ketersediaan Ruangan</h3>
+        <div class="room-grid">
+
+            {% set rooms = [
+                {'nama': 'Ruang Rapat Utama', 'lokasi': 'Lantai 2', 'kapasitas': 30},
+                {'nama': 'Ruang Rapat Pleno 1', 'lokasi': 'Lantai 3', 'kapasitas': 20},
+                {'nama': 'Ruang Rapat Pleno 2', 'lokasi': 'Lantai 3', 'kapasitas': 30},
+                {'nama': 'Ruang Rapat Kelompok', 'lokasi': 'Lantai 3', 'kapasitas': 15}
+            ] %}
+
+            {% for room in rooms %}
+            <div class="room-card">
+                <h4><i class="fas fa-door-open"></i> {{ room.nama }}</h4>
+                <p><i class="fas fa-map-marker-alt"></i> {{ room.lokasi }}</p>
+                <p><i class="fas fa-users"></i> Kapasitas: {{ room.kapasitas }} orang</p>
+                {% if room.nama in ruang_digunakan %}
+                    <span class="room-status status-occupied">Ruangan Penuh</span>
+                {% else %}
+                    <span class="room-status status-available">Tersedia</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="welcome-section">
+        <h2>Selamat Datang, {{ session['nama'] }} (Admin)</h2>
+        <p class="welcome-message">Berikut ringkasan aktivitas reservasi ruangan.</p>
+    </div>
+
+    <!-- Chart Area dengan style (Dipindah ke atas) -->
+    <div style="max-width: 500px; margin: 20px auto; padding: 20px;">
+        <canvas id="reservasiChart"></canvas>
+    </div>
+
+    <!-- Stat Cards (Dipindah ke bawah) -->
+    <div class="stats-section">
+        <div class="stat-card">
+            <h3>Total Reservasi</h3>
+            <p>{{ total_semua }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Disetujui</h3>
+            <p>{{ total_disetujui }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Ditolak</h3>
+            <p>{{ total_ditolak }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Menunggu</h3>
+            <p>{{ total_menunggu }}</p>
+        </div>
+    </div>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const data = {
+            labels: ['Disetujui', 'Ditolak', 'Menunggu'],
+            datasets: [{
+                data: [{{ total_disetujui }}, {{ total_ditolak }}, {{ total_menunggu }}],
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.8)',  // Hijau untuk Disetujui
+                    'rgba(255, 99, 132, 0.8)',  // Merah untuk Ditolak
+                    'rgba(255, 206, 86, 0.8)'   // Kuning untuk Menunggu
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        const config = {
+            type: 'doughnut',
+            data: data,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Distribusi Status Reservasi',
+                        font: {
+                            size: 16
+                        }
+                    }
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                }
+            }
+        };
+
+        new Chart(
+            document.getElementById('reservasiChart'),
+            config
+        );
+    </script>
+</div>
+{% endblock %}

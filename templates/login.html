@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Pegawai | Komnas HAM RI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+    .toast {
+        visibility: hidden;
+        min-width: 250px;
+        margin-left: -125px;
+        background-color: #2176ae;
+        color: #fff;
+        text-align: center;
+        border-radius: 8px;
+        padding: 16px;
+        position: fixed;
+        z-index: 9999;
+        left: 50%;
+        bottom: 40px;
+        font-size: 1rem;
+        box-shadow: 0 2px 8px rgba(33,118,174,0.15);
+        opacity: 0;
+        transition: opacity 0.4s, bottom 0.4s;
+    }
+    .toast.show {
+        visibility: visible;
+        opacity: 1;
+        bottom: 60px;
+    }
+    .alert {
+        padding: 12px 18px;
+        border-radius: 6px;
+        margin-bottom: 18px;
+        font-size: 1rem;
+        text-align: center;
+    }
+    .alert-info {
+        background: #e0ecff;
+        color: #2176ae;
+        border: 1px solid #b6d0f7;
+    }
+    .alert-success {
+        background: #e6f9ed;
+        color: #218838;
+        border: 1px solid #b7eacb;
+    }
+    .alert-danger, .alert-error {
+        background: #ffeaea;
+        color: #c82333;
+        border: 1px solid #f5c6cb;
+    }
+    </style>
+</head>
+<body>
+    <header class="gov-header">
+        <div class="header-content">
+            <img src="{{ url_for('static', filename='img/logo-komnas.png') }}" alt="Logo Komnas HAM" class="header-logo">
+        </div>
+    </header>
+    <main class="main-content">
+        <div class="login-container">
+            <div class="login-card">
+                <img src="{{ url_for('static', filename='img/logo-kecil.png') }}" alt="Logo Komnas HAM" class="logo">
+                <h2>Portal Login Pegawai</h2>
+                <p>Sistem Reservasi Ruangan Rapat Komnas HAM RI</p>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            {% if category in ['error', 'danger', 'info'] %}
+                                <div class="alert alert-{{ category }}">
+                                    {{ message }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST">
+                    <label for="nip">NIP</label>
+                    <input type="text" name="nip" id="nip" placeholder="Masukkan NIP Anda" required>
+
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" placeholder="Masukkan password Anda" required>
+
+                    <button type="submit">Masuk</button>
+                </form>
+            </div>
+        </div>
+    </main>
+    <footer class="gov-footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Komisi Nasional Hak Asasi Manusia Republik Indonesia</p>
+            <p>Jl. Latuharhary No.4B, Menteng, Jakarta Pusat 10310</p>
+        </div>
+    </footer>
+</body>
+</html>

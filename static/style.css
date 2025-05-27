@@ -1,0 +1,85 @@
+/* Umum */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #eaeaea;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+/* Kontainer Login */
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+}
+
+/* Kartu Login */
+.login-card {
+    background-color: #fff;
+    padding: 30px 25px;
+    border-radius: 10px;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Logo */
+.logo {
+    width: 80px;
+    margin-bottom: 15px;
+}
+
+/* Judul */
+.login-card h2 {
+    margin-bottom: 5px;
+    color: #003366;
+}
+
+/* Deskripsi */
+.login-card p {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Form */
+.login-card form {
+    text-align: left;
+}
+
+.login-card label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+/* Tombol */
+.login-card button {
+    width: 100%;
+    padding: 10px;
+    background-color: #003366;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.login-card button:hover {
+    background-color: #002752;
+}

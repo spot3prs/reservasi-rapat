@@ -1,0 +1,69 @@
+{% extends 'layout.html' %}
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-container">
+      {% for category, message in messages %}
+        <div class="flash-message flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+<div class="dashboard-container">
+    <h2>Daftar Pengajuan Reservasi Anda</h2>
+    <div class="table-section">
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Ruangan</th>
+                    <th>Tanggal</th>
+                    <th>Waktu</th>
+                    <th>Keperluan</th>
+                    <th>Lampiran</th>  <!-- New column -->
+                    <th>Status</th>
+                    <th>Pengajuan</th>
+                    <th>Aksi</th> <!-- Tambahkan kolom Aksi -->
+                </tr>
+            </thead>
+            <tbody>
+            {% for r in data %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ r['ruangan'] }}</td>
+                    <td>{{ r['tanggal'] }}</td>
+                    <td>{{ r['waktu_mulai'] }} - {{ r['waktu_selesai'] }}</td>
+                    <td>{{ r['keperluan'] }}</td>
+                    <td>
+                        {% if r['lampiran'] %}
+                        <a href="{{ url_for('static', filename='uploads/' + r['lampiran']) }}" 
+                           target="_blank"
+                           style="color: #2176ae; text-decoration: none;">
+                            <i class="fas fa-file-alt"></i> Lihat
+                        </a>
+                        {% else %}
+                        <span style="color: #999;">-</span>
+                        {% endif %}
+                    </td>
+                    <td><span class="status-badge status-{{ r['status'] | lower | replace(' ', '-') }}">{{ r['status'] }}</span></td>
+                    <td>{{ r['waktu_pengajuan'] }}</td>
+                    {% if r['status'] == 'Menunggu' %}
+                        <td>
+                            <form action="{{ url_for('batalkan_reservasi', id=r['id']) }}" method="POST" onsubmit="return confirm('Yakin ingin membatalkan reservasi ini?');">
+                                <button type="submit" class="btn-cancel">Batalkan</button>
+                            </form>
+                        </td>
+                    {% else %}
+                        <td>-</td>
+                    {% endif %}
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="9" style="text-align: center;">Belum ada pengajuan reservasi.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

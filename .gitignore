@@ -1,0 +1,9 @@
+# filepath: d:\reservasi-rapat\.gitignore
+__pycache__/
+*.pyc
+.env
+venv/
+static/uploads/*
+!static/uploads/.gitkeep
+config.py
+*.log

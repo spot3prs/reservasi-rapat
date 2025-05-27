@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h2>Edit Data Pegawai</h2>
+<form method="POST">
+    <label>Nama:</label><br>
+    <input type="text" name="nama" value="{{ user.nama }}" required><br><br>
+
+    <label>Password baru (kosongkan jika tidak ingin diubah):</label><br>
+    <input type="password" name="password"><br><br>
+
+    <button type="submit">Simpan Perubahan</button>
+</form>
+{% endblock %}

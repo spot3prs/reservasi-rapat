@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>404 - Halaman Tidak Ditemukan</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        body {
+            background: linear-gradient(135deg, #e0ecff 0%, #b6d0f7 100%);
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Roboto', Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container-404 {
+            background: rgba(255,255,255,0.97);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
+            padding: 40px 32px 32px 32px;
+            text-align: center;
+            max-width: 420px;
+        }
+        .icon-human {
+            width: 90px;
+            margin-bottom: 18px;
+            animation: fadeInDown 1s;
+        }
+        h2 {
+            color: #2176ae;
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        p {
+            color: #444;
+            font-size: 1.1rem;
+            margin-bottom: 24px;
+        }
+        .ham-message {
+            color: #2176ae;
+            font-weight: 500;
+            margin-bottom: 18px;
+            font-size: 1.05rem;
+        }
+        a {
+            display: inline-block;
+            background: #2176ae;
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(33,118,174,0.12);
+            transition: background 0.2s, transform 0.2s;
+            animation: heartBeat 1.5s;
+        }
+        a:hover {
+            background: #4f8edc;
+            color: #fff;
+            transform: scale(1.07);
+        }
+        @media (max-width: 500px) {
+            .container-404 {
+                padding: 24px 8px;
+            }
+            h2 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-404 animate__animated animate__fadeInDown">
+        <!-- Ilustrasi manusia (SVG) dengan nuansa biru -->
+        <svg class="icon-human" viewBox="0 0 64 64" fill="none">
+            <circle cx="32" cy="20" r="12" fill="#2176ae"/>
+            <ellipse cx="32" cy="48" rx="20" ry="12" fill="#2176ae" opacity="0.18"/>
+            <ellipse cx="32" cy="44" rx="14" ry="8" fill="#2176ae" opacity="0.5"/>
+        </svg>
+        <h2>404 - Halaman Tidak Ditemukan</h2>
+        <div class="ham-message animate__animated animate__pulse">
+            Setiap manusia berhak mendapat informasi yang benar.<br>
+            Namun halaman ini belum tersedia.
+        </div>
+        <p>
+            Mari kembali ke dashboard dan terus junjung tinggi <b>Hak Asasi Manusia</b> dalam setiap aktivitas kita.
+        </p>
+        <a href="{{ url_for('dashboard') }}" class="animate__animated animate__heartBeat">Kembali ke Dashboard</a>
+    </div>
+</body>
+</html>

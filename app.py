@@ -13,10 +13,32 @@ import pdfkit
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from werkzeug.utils import secure_filename
+from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail, Message
+import re
 
 app = Flask(__name__)
 app.secret_key = 'secret123'
 app.permanent_session_lifetime = timedelta(minutes=30)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///reservasi.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Konfigurasi email
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'your-email@gmail.com'  # Ganti dengan email Anda
+app.config['MAIL_PASSWORD'] = 'your-app-password'     # Ganti dengan password aplikasi Anda
+
+db = SQLAlchemy(app)
+mail = Mail(app)
+
+# Tambahkan filter nl2br
+@app.template_filter('nl2br')
+def nl2br(value):
+    if not value:
+        return ""
+    return value.replace('\n', '<br>')
 
 def admin_required(f):
     @wraps(f)
@@ -792,10 +814,6 @@ def kirim_wa(no_wa, pesan):
     except Exception as e:
         print("[ERROR] Gagal mengirim WA:", e)
 
-def jadwal_pagi_kirim_notifikasi():
-    with app.app_context():
-        kirim_notifikasi_otomatis()
-
 def jadwal_pengingat():
     with app.app_context():
         print("[SCHEDULER] Menjalankan pengingat otomatis...")
@@ -810,5 +828,250 @@ atexit.register(lambda: scheduler.shutdown())
 def not_found_error(error):
     return render_template('404.html'), 404
 
+@app.route('/ajukan-akun', methods=['GET', 'POST'])
+def ajukan_akun():
+    if request.method == 'POST':
+        try:
+            nip = request.form['nip']
+            nama = request.form['nama']
+            no_wa = request.form['no_wa']
+            isi_surat = request.form['isi_surat']
+
+            # Handle file upload
+            file_surat = request.files.get('file_surat')
+            file_surat_name = None
+            if file_surat and file_surat.filename != '':
+                print(f"[DEBUG] File yang diupload: {file_surat.filename}")
+                
+                # Pastikan ekstensi file adalah PDF
+                if not file_surat.filename.lower().endswith('.pdf'):
+                    flash("File harus dalam format PDF!", "danger")
+                    return redirect(url_for('ajukan_akun'))
+                
+                # Generate nama file yang unik
+                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                file_surat_name = f"{timestamp}_{secure_filename(file_surat.filename)}"
+                print(f"[DEBUG] Nama file yang akan disimpan: {file_surat_name}")
+                
+                # Buat folder jika belum ada
+                upload_folder = os.path.join('static', 'uploads')
+                if not os.path.exists(upload_folder):
+                    os.makedirs(upload_folder)
+                    print(f"[DEBUG] Folder upload dibuat: {upload_folder}")
+                
+                # Simpan file
+                file_path = os.path.join(upload_folder, file_surat_name)
+                try:
+                    file_surat.save(file_path)
+                    print(f"[DEBUG] File disimpan di: {file_path}")
+                    
+                    # Verifikasi file tersimpan
+                    if os.path.exists(file_path):
+                        file_size = os.path.getsize(file_path)
+                        print(f"[DEBUG] File berhasil disimpan dengan ukuran: {file_size} bytes")
+                        
+                        # Verifikasi file bisa dibaca
+                        with open(file_path, 'rb') as f:
+                            content = f.read()
+                            print(f"[DEBUG] File bisa dibaca, ukuran konten: {len(content)} bytes")
+                    else:
+                        print("[ERROR] File gagal disimpan!")
+                        flash("Gagal menyimpan file PDF.", "danger")
+                        return redirect(url_for('ajukan_akun'))
+                except Exception as e:
+                    print(f"[ERROR] Gagal menyimpan file: {str(e)}")
+                    flash("Gagal menyimpan file PDF.", "danger")
+                    return redirect(url_for('ajukan_akun'))
+
+            # Check if NIP already exists in pegawai table
+            conn = get_db_connection()
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM pegawai WHERE nip = %s", (nip,))
+            if cursor.fetchone():
+                flash("NIP sudah terdaftar sebagai pegawai!", "danger")
+                return redirect(url_for('ajukan_akun'))
+
+            # Check if NIP already has pending request
+            cursor.execute("SELECT * FROM pengajuan_akun WHERE nip = %s AND status = 'Menunggu'", (nip,))
+            if cursor.fetchone():
+                flash("Anda sudah memiliki pengajuan yang sedang diproses!", "warning")
+                return redirect(url_for('ajukan_akun'))
+
+            # Insert new request with file information
+            print(f"[DEBUG] Menyimpan data ke database dengan file_surat: {file_surat_name}")
+            cursor.execute('''
+                INSERT INTO pengajuan_akun (nip, nama, no_wa, isi_surat, file_surat, tanggal_pengajuan, status)
+                VALUES (%s, %s, %s, %s, %s, NOW(), 'Menunggu')
+            ''', (nip, nama, no_wa, isi_surat, file_surat_name))
+            conn.commit()
+            print("[DEBUG] Data berhasil disimpan ke database")
+
+            # Kirim notifikasi ke semua admin
+            cursor.execute("SELECT nama, no_wa FROM pegawai WHERE role = 'admin'")
+            admins = cursor.fetchall()
+            cursor.close()
+            conn.close()
+
+            for admin in admins:
+                if admin['no_wa']:
+                    pesan_admin = (
+                        f"[PENGAJUAN AKUN BARU]\n\n"
+                        f"Nama: {nama}\n"
+                        f"NIP: {nip}\n"
+                        f"Telah mengajukan permintaan akun reservasi.\n\n"
+                        f"Segera lakukan verifikasi di dashboard admin."
+                    )
+                    kirim_wa(admin['no_wa'], pesan_admin)
+
+            flash("Pengajuan akun berhasil dikirim!", "success")
+            return redirect(url_for('login'))
+
+        except Exception as e:
+            print(f"[ERROR PENGAJUAN]: {str(e)}")
+            flash("Terjadi kesalahan saat mengajukan akun.", "danger")
+            return redirect(url_for('ajukan_akun'))
+
+    return render_template('ajukan_akun.html')
+
+@app.route('/verifikasi-pengajuan')
+@admin_required
+def verifikasi_pengajuan():
+    if 'nip' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM pengajuan_akun ORDER BY tanggal_pengajuan DESC")
+    pengajuan = cursor.fetchall()
+    conn.close()
+
+    return render_template('kelola_pengajuan.html', pengajuan=pengajuan)
+
+@app.route('/setujui-pengajuan/<int:id>', methods=['POST'])
+@admin_required
+def setujui_pengajuan(id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Get request data
+        cursor.execute("SELECT * FROM pengajuan_akun WHERE id = %s AND status = 'Menunggu'", (id,))
+        data = cursor.fetchone()
+
+        if data:
+            # Generate default password (can be changed later)
+            default_password = "12345"
+
+            # Insert into pegawai table
+            cursor.execute('''
+                INSERT INTO pegawai (nip, nama, password, no_wa, role)
+                VALUES (%s, %s, %s, %s, %s)
+            ''', (data['nip'], data['nama'], default_password, data['no_wa'], 'pegawai'))
+
+            # Update request status
+            cursor.execute("UPDATE pengajuan_akun SET status = 'Disetujui' WHERE id = %s", (id,))
+            conn.commit()
+
+            # Send WhatsApp notification
+            if data['no_wa']:
+                pesan = (
+                    f"Hai, {data['nama']}!\n\n"
+                    f"Pengajuan akun Anda telah DISETUJUI.\n"
+                    f"Silakan login dengan:\n"
+                    f"NIP: {data['nip']}\n"
+                    f"Password: {default_password}\n\n"
+                    f"Mohon segera ubah password Anda setelah login pertama."
+                )
+                kirim_wa(data['no_wa'], pesan)
+
+            flash("Pengajuan disetujui dan akun berhasil dibuat.", "success")
+        else:
+            flash("Data pengajuan tidak ditemukan atau sudah diproses.", "danger")
+
+        conn.close()
+        return redirect(url_for('verifikasi_pengajuan'))
+
+    except Exception as e:
+        print(f"[ERROR VERIFIKASI]: {str(e)}")
+        flash("Terjadi kesalahan saat memverifikasi pengajuan.", "danger")
+        return redirect(url_for('verifikasi_pengajuan'))
+
+@app.route('/tolak-pengajuan/<int:id>', methods=['POST'])
+@admin_required
+def tolak_pengajuan(id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Get request data
+        cursor.execute("SELECT * FROM pengajuan_akun WHERE id = %s AND status = 'Menunggu'", (id,))
+        data = cursor.fetchone()
+
+        if data:
+            # Update request status
+            cursor.execute("UPDATE pengajuan_akun SET status = 'Ditolak' WHERE id = %s", (id,))
+            conn.commit()
+
+            # Send WhatsApp notification
+            if data['no_wa']:
+                pesan = (
+                    f"Hai, {data['nama']}.\n\n"
+                    f"Mohon maaf, pengajuan akun Anda telah DITOLAK.\n"
+                    f"Silakan hubungi admin untuk informasi lebih lanjut."
+                )
+                kirim_wa(data['no_wa'], pesan)
+
+            flash("Pengajuan berhasil ditolak.", "warning")
+        else:
+            flash("Data pengajuan tidak ditemukan atau sudah diproses.", "danger")
+
+        conn.close()
+        return redirect(url_for('verifikasi_pengajuan'))
+
+    except Exception as e:
+        print(f"[ERROR VERIFIKASI]: {str(e)}")
+        flash("Terjadi kesalahan saat memverifikasi pengajuan.", "danger")
+        return redirect(url_for('verifikasi_pengajuan'))
+
+@app.route('/surat_pengajuan')
+def surat_pengajuan():
+    # Get form data from query parameters
+    nama = request.args.get('nama')
+    nip = request.args.get('nip')
+    no_wa = request.args.get('no_wa')
+    isi_surat = request.args.get('isi_surat')
+    
+    if not all([nama, nip, no_wa, isi_surat]):
+        return "Data tidak lengkap", 400
+        
+    return render_template('surat_pengajuan.html', 
+                         nama=nama,
+                         nip=nip,
+                         no_wa=no_wa,
+                         isi_surat=isi_surat,
+                         now=datetime.now())
+
+@app.route('/view-pdf/<filename>')
+@admin_required
+def view_pdf(filename):
+    try:
+        file_path = os.path.join('static', 'uploads', filename)
+        
+        if not os.path.exists(file_path):
+            flash("File tidak ditemukan.", "danger")
+            return redirect(url_for('verifikasi_pengajuan'))
+        
+        return send_file(
+            file_path,
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name=filename
+        )
+        
+    except Exception as e:
+        print(f"[ERROR VIEW PDF]: {str(e)}")
+        flash("Gagal mengunduh file PDF.", "danger")
+        return redirect(url_for('verifikasi_pengajuan'))
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)

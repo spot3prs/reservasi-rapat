@@ -15,7 +15,7 @@
 
     <div style="margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
         <h2 class="dashboard-title mb-1" style="font-size: 1.6rem; font-weight: 600; text-align: left; margin: 0;">
-            Manajemen Reservasi
+            Laporan Reservasi
         </h2>
         <form action="{{ url_for('kirim_pengingat_sekarang') }}" method="post" style="margin: 0;">
             <button type="submit"
@@ -47,7 +47,9 @@
         <button type="submit" name="format" value="pdf" class="btn btn-danger" style="padding: 6px 18px; border-radius: 4px; background: #dc3545; color: #fff; border: none; cursor: pointer;">Export PDF</button>
         <button type="submit" name="format" value="excel" class="btn btn-success" style="padding: 6px 18px; border-radius: 4px; background: #28a745; color: #fff; border: none; cursor: pointer;">Export Excel</button>
     </form>
-
+    <h2 class="dashboard-title mb-1" style="font-size: 1.6rem; font-weight: 600; text-align: left; margin: 0; margin-top: 20px;">
+        Cari & Filter
+    </h2>
     <!-- Search dan Filter -->
     <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
         <input type="text" id="searchInput" placeholder="Cari reservasi..." style="padding: 6px 12px; border-radius: 4px; border: 1px solid #ccc; min-width: 180px;">
@@ -66,80 +68,55 @@
     </div>
 
     <div class="table-responsive">
-        <!-- Form hanya untuk tombol pengingat dan checkbox -->
-        <form id="form-checkbox-pengingat" action="{{ url_for('kirim_pengingat_terpilih') }}" method="post" style="margin-bottom: 12px;">
-            <button id="btn-pengingat-terpilih" type="submit"
-                style="
-                    padding: 4px 10px;
-                    font-size: 0.95rem;
-                    border-radius: 4px;
-                    background: #2176ae;
-                    color: #fff;
-                    border: none;
-                    cursor: pointer;
-                    min-width: 0;
-                    width: auto;
-                    box-shadow: 0 1px 4px rgba(33,118,174,0.07);
-                    transition: background 0.2s;
-                    display: none; /* Awal: disembunyikan */
-                    align-items: center;
-                    gap: 6px;
-                    margin-bottom: 10px;
-                    white-space: nowrap;
-                "
-                onmouseover="this.style.background='#185a8c'"
-                onmouseout="this.style.background='#2176ae'">
-                <span style="font-size:1.1em;">&#10003;</span> Kirim Pengingat yang di beri tanda centang
-            </button>
-            <table class="styled-table">
-                <thead>
-                    <tr>
-                        <th>
-                            <input type="checkbox" id="checkAll">
-                        </th>
-                        <th>ID</th>
-                        <th>Nama Pegawai</th>
-                        <th>Ruangan</th>
-                        <th>Tanggal</th>
-                        <th>Waktu Mulai</th>
-                        <th>Waktu Selesai</th>
-                        <th>Kegiatan</th>
-                        <th>Lampiran</th>  <!-- New column -->
-                        <th>Status</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for r in reservasi %}
-                    <tr>
-                        <td>
-                            <input type="checkbox" name="ids" value="{{ r.id }}">
-                        </td>
-                        <td>{{ r.id }}</td>
-                        <td>{{ r.nama }}</td>
-                        <td>{{ r.nama_ruangan }}</td>
-                        <td>{{ r.tanggal }}</td>
-                        <td>{{ r.waktu_mulai }}</td>
-                        <td>{{ r.waktu_selesai }}</td>
-                        <td>{{ r.kegiatan }}</td>
-                        <td>
-                            {% if r.lampiran %}
-                            <a href="{{ url_for('static', filename='uploads/' + r.lampiran) }}" 
-                               target="_blank"
-                               style="color: #2176ae; text-decoration: none;">
-                                <i class="fas fa-file-alt"></i> Lihat
-                            </a>
-                            {% else %}
-                            <span style="color: #999;">-</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <span class="status {{ r.status|lower }}">{{ r.status }}</span>
-                        </td>
-                        <td>
-                            <div class="dropdown">
-                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Pilih Aksi
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>
+                        <input type="checkbox" id="checkAll">
+                    </th>
+                    <th>ID</th>
+                    <th>Nama Pegawai</th>
+                    <th>Ruangan</th>
+                    <th>Tanggal</th>
+                    <th>Waktu Mulai</th>
+                    <th>Waktu Selesai</th>
+                    <th>Kegiatan</th>
+                    <th>Lampiran</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in reservasi %}
+                <tr>
+                    <td>
+                        <input type="checkbox" name="ids" value="{{ r.id }}">
+                    </td>
+                    <td>{{ r.id }}</td>
+                    <td>{{ r.nama }}</td>
+                    <td>{{ r.nama_ruangan }}</td>
+                    <td>{{ r.tanggal }}</td>
+                    <td>{{ r.waktu_mulai }}</td>
+                    <td>{{ r.waktu_selesai }}</td>
+                    <td>{{ r.kegiatan }}</td>
+                    <td>
+                        {% if r.lampiran %}
+                        <a href="{{ url_for('static', filename='uploads/' + r.lampiran) }}" 
+                           target="_blank"
+                           style="color: #2176ae; text-decoration: none;">
+                            <i class="fas fa-file-alt"></i> Lihat
+                        </a>
+                        {% else %}
+                        <span style="color: #999;">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="status {{ r.status|lower }}">{{ r.status }}</span>
+                    </td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Pilih Aksi
                             </button>
                             <ul class="dropdown-menu">
                                 {% if r.status == 'Menunggu' %}
@@ -162,12 +139,37 @@
                             </ul>
                         </div>
                     </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </form>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+
+    <!-- Form untuk pengingat terpilih -->
+    <form id="form-checkbox-pengingat" action="{{ url_for('kirim_pengingat_terpilih') }}" method="post" style="margin-top: 12px;">
+        <button id="btn-pengingat-terpilih" type="submit"
+            style="
+                padding: 4px 10px;
+                font-size: 0.95rem;
+                border-radius: 4px;
+                background: #2176ae;
+                color: #fff;
+                border: none;
+                cursor: pointer;
+                min-width: 0;
+                width: auto;
+                box-shadow: 0 1px 4px rgba(33,118,174,0.07);
+                transition: background 0.2s;
+                display: none;
+                align-items: center;
+                gap: 6px;
+                white-space: nowrap;
+            "
+            onmouseover="this.style.background='#185a8c'"
+            onmouseout="this.style.background='#2176ae'">
+            <span style="font-size:1.1em;">&#10003;</span> Kirim Pengingat yang di beri tanda centang
+        </button>
+    </form>
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -184,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
         for (const row of table.rows) {
             const cells = row.getElementsByTagName('td');
             const rowText = row.innerText.toLowerCase();
-            const statusText = cells[8]?.innerText.trim();
+            const statusText = cells[9]?.innerText.trim();
             const ruanganText = cells[3]?.innerText.trim();
 
             let show = true;

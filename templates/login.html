@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <title>Login Pegawai | Komnas HAM RI</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
     .toast {
         visibility: hidden;
@@ -87,14 +89,57 @@
 
                     <button type="submit">Masuk</button>
                 </form>
+                
+                <p style="text-align: center; margin-top: 16px;">
+                    <a href="{{ url_for('ajukan_akun') }}" 
+                       style="color: #2176ae; 
+                              text-decoration: none; 
+                              font-size: 0.9rem;">
+                        Belum punya akun? Ajukan di sini
+                    </a>
+                </p>
             </div>
         </div>
     </main>
-    <footer class="gov-footer">
-        <div class="footer-content">
-            <p>&copy; 2024 Komisi Nasional Hak Asasi Manusia Republik Indonesia</p>
-            <p>Jl. Latuharhary No.4B, Menteng, Jakarta Pusat 10310</p>
+    <footer class="gov-footer" style="background-color: #003366; color: #ffffff;">
+        <div class="footer-content" style="text-align: left; padding: 24px;">
+            <div style="display: flex; align-items: center; margin-bottom: 16px; gap: 15px;">
+                <h4 style="
+                    font-family: 'Times New Roman', Times, serif; 
+                    font-weight: 700; 
+                    margin: 0; 
+                    font-size: 32px; 
+                    letter-spacing: 0.5px; 
+                    color: #ffffff;">KOMNAS HAM RI</h4>
+                <img src="{{ url_for('static', filename='img/logo-kecil.png') }}" 
+                     alt="Logo Komnas HAM" 
+                     style="height: 45px; width: auto;">
+            </div>
+            
+            <p style="color: #ffffff; max-width: 600px; margin-bottom: 24px; line-height: 1.6; font-size: 15px;">
+                Komnas HAM adalah lembaga mandiri yang kedudukannya setingkat dengan lembaga negara lainnya 
+                yang berfungsi melaksanakan pengkajian, penelitian, penyuluhan, pemantauan, dan mediasi hak asasi manusia.
+            </p>
+
+            <address style="color: #ffffff; font-style: normal; margin-bottom: 8px; font-size: 15px;">
+                <i class="fas fa-map-marker-alt"></i> 
+                Jalan Latuharhari No. 4B, Kelurahan Menteng, Jakarta Pusat 10310, Indonesia
+            </address>
+            
+            <p style="color: #ffffff; margin-bottom: 8px; font-size: 15px;">
+                <i class="fas fa-phone"></i> +62-21-3925230 &nbsp;&nbsp; 
+                <i class="fas fa-fax"></i> +62-21-3925227
+            </p>
+            
+            <p style="color: #ffffff; font-size: 15px;">
+                <i class="fas fa-envelope"></i> 
+                <a href="mailto:info@komnasham.go.id" 
+                   style="color: #ffffff; text-decoration: none; font-weight: 500;">
+                    info@komnasham.go.id
+                </a>
+            </p>
         </div>
     </footer>
+
 </body>
 </html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="date=no">
+    <meta name="format-detection" content="address=no">
+    <meta name="format-detection" content="email=no">
+    <meta name="format-detection" content="url=no">
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        body { 
+            font-family: Times New Roman, serif; 
+            margin: 30px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        .letterhead {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 15px;
+        }
+        .logo {
+            width: 80px;
+            height: auto;
+            margin-right: 20px;
+        }
+        .header-text {
+            flex-grow: 1;
+        }
+        .header-text h1 {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0 0 5px 0;
+            text-align: center;
+        }
+        .header-text h2 {
+            font-size: 14px;
+            margin: 0;
+            text-align: center;
+        }
+        .title {
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .recipient {
+            margin: 15px 0;
+        }
+        .content {
+            margin: 15px 0;
+        }
+        .bio-data {
+            margin: 15px 0;
+            padding-left: 15px;
+        }
+        .bio-data li {
+            margin: 5px 0;
+            list-style: none;
+        }
+        .ttd {
+            margin-top: 50px;
+            margin-left: 40px;
+            text-align: left;
+        }
+        .signature-space {
+            height: 80px;
+        }
+        .ttd p {
+            margin: 5px 0;
+            line-height: 1.6;
+        }
+        @media print {
+            body {
+                margin: 0;
+                padding: 20px;
+            }
+            .no-print {
+                display: none;
+            }
+            body::before,
+            body::after {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="letterhead">
+        <img src="{{ url_for('static', filename='img/logo-kecil.png') }}" 
+             alt="Logo Komnas HAM" 
+             class="logo">
+        <div class="header-text">
+            <h1>KOMISI NASIONAL HAK ASASI MANUSIA</h1>
+            <h2>REPUBLIK INDONESIA</h2>
+        </div>
+    </div>
+
+    <div class="recipient">
+        Kepada Yth,<br>
+        Admin Sistem Reservasi Rapat<br>
+        Komnas HAM RI
+    </div>
+
+    <p>Dengan hormat,</p>
+    <p>Saya yang bertanda tangan di bawah ini:</p>
+
+    <ul class="bio-data">
+        <li>Nama: <strong>{{ nama }}</strong></li>
+        <li>NIP: <strong>{{ nip }}</strong></li>
+        <li>Nomor WhatsApp: <strong>{{ no_wa }}</strong></li>
+    </ul>
+
+    <div class="content">
+        <p>Dengan ini mengajukan permohonan pembuatan akun untuk dapat menggunakan sistem reservasi ruang rapat Komnas HAM RI.</p>
+
+        <p>Demikian surat ini saya buat dengan sebenar-benarnya. Atas perhatian dan kerjasamanya saya ucapkan terima kasih.</p>
+    </div>
+
+    <div class="ttd">
+        <p>Jakarta, {{ now.strftime('%d %B %Y') }}</p>
+        <p>Hormat saya,</p>
+        <div class="signature-space"></div>
+        <p><strong>{{ nama }}</strong></p>
+        <p>NIP. {{ nip }}</p>
+    </div>
+
+    <div class="no-print" style="text-align: center; margin-top: 20px;">
+        <button onclick="window.print()" style="padding: 10px 20px; background-color: #003366; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            <i class="fas fa-print"></i> Cetak Surat
+        </button>
+    </div>
+
+    <script>
+        // Automatically trigger print dialog when page loads
+        window.onload = function() {
+            window.print();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+{% extends 'layout.html' %}
+{% block content %}
+<style>
+    /* Hide sidebar and toggle for this page */
+    .sidebar-menu,
+    .sidebar-toggle,
+    .sidebar-toggle-label {
+        display: none !important;
+    }
+    
+    /* Adjust main content to full width */
+    .container {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 20px;
+    }
+
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+</style>
+
+<div class="form-container">
+    <div class="form-header">
+        <h2><i class="fas fa-user-plus"></i> Form Pengajuan Akun</h2>
+        <p class="form-subtitle">Silakan isi data diri Anda untuk mengajukan akun baru</p>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="account-form" id="pengajuanForm">
+        <div class="form-group">
+            <label for="nip"><i class="fas fa-id-card"></i> NIP</label>
+            <input type="text" 
+                   id="nip" 
+                   name="nip" 
+                   required 
+                   class="form-control"
+                   pattern="[0-9]+"
+                   placeholder="Masukkan NIP Anda">
+        </div>
+
+        <div class="form-group">
+            <label for="nama"><i class="fas fa-user"></i> Nama Lengkap</label>
+            <input type="text" 
+                   id="nama" 
+                   name="nama" 
+                   required 
+                   class="form-control"
+                   placeholder="Masukkan nama lengkap Anda">
+        </div>
+
+        <div class="form-group">
+            <label for="no_wa"><i class="fab fa-whatsapp"></i> Nomor WhatsApp</label>
+            <input type="text" 
+                   id="no_wa" 
+                   name="no_wa" 
+                   required 
+                   class="form-control"
+                   pattern="[0-9]+"
+                   placeholder="Contoh: 62**********">
+        </div>
+
+        <div class="form-group">
+            <label for="isi_surat"><i class="fas fa-file-alt"></i> Isi Surat Pengajuan</label>
+            <textarea 
+                id="isi_surat"
+                name="isi_surat" 
+                rows="8" 
+                required 
+                class="form-control"
+                placeholder="Tuliskan alasan pengajuan akun dan informasi tambahan lainnya"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="file_surat"><i class="fas fa-upload"></i> Upload Surat Pengajuan</label>
+            <input type="file" 
+                   id="file_surat" 
+                   name="file_surat" 
+                   class="form-control" 
+                   required
+                   accept=".pdf">
+            <small class="form-text text-muted">Format yang didukung: PDF</small>
+        </div>
+
+        <div class="form-footer">
+            <button type="button" onclick="previewSurat()" class="submit-btn" style="width: 100%; max-width: 300px; margin-bottom: 10px;">
+                <i class="fas fa-download"></i> Unduh Surat
+            </button>
+            <button type="submit" class="submit-btn" style="width: 100%;">
+                <i class="fas fa-paper-plane"></i> Kirim Pengajuan
+            </button>
+        </div>
+    </form>
+
+    <div class="form-note">
+        <p><i class="fas fa-info-circle"></i> Setelah mengajukan, admin akan memproses permintaan Anda.</p>
+    </div>
+</div>
+
+<style>
+.form-footer {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-footer .submit-btn:first-child {
+    background-color: #003366;
+}
+
+.form-footer .submit-btn:last-child {
+    background-color: #003366;
+    margin-top: 10px;
+}
+
+.form-text {
+    font-size: 0.875em;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+</style>
+
+<script>
+function previewSurat() {
+    // Ambil nilai dari form
+    const nip = document.getElementById('nip').value;
+    const nama = document.getElementById('nama').value;
+    const no_wa = document.getElementById('no_wa').value;
+    const isi_surat = document.getElementById('isi_surat').value;
+
+    // Validasi form
+    if (!nip || !nama || !no_wa || !isi_surat) {
+        alert('Mohon lengkapi semua data terlebih dahulu sebelum mengunduh surat.');
+        return;
+    }
+
+    // Buka surat di tab baru dengan data form
+    const url = `/surat_pengajuan?nama=${encodeURIComponent(nama)}&nip=${encodeURIComponent(nip)}&no_wa=${encodeURIComponent(no_wa)}&isi_surat=${encodeURIComponent(isi_surat)}`;
+    const suratWindow = window.open(url, '_blank');
+}
+</script>
+{% endblock %}
+

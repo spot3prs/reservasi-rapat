@@ -1,7 +1,9 @@
 {% extends 'layout.html' %}
 {% block content %}
-<div class="container mt-4">
-    <h2 style="text-align:center; color:#003366; margin-bottom:24px;">Kalender Jadwal Rapat</h2>
+<div class="calendar-container">
+    <div class="calendar-header">
+        <h2><i class="fas fa-calendar-alt"></i> Kalender Jadwal Rapat</h2>
+    </div>
     <div id="calendar"></div>
 </div>
 
@@ -10,68 +12,206 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 
 <style>
-  #calendar {
-    max-width: 950px;
-    margin: 40px auto;
-    background: #fff;
-    border-radius: 18px;
-    box-shadow: 0 4px 24px rgba(0,51,102,0.10), 0 1.5px 6px rgba(0,51,102,0.08);
-    padding: 24px 16px 8px 16px;
-  }
-  .fc-toolbar-title {
-    color: #003366;
-    font-size: 1.5rem;
-    font-weight: bold;
-    letter-spacing: 1px;
-  }
-  .fc-button, .fc-button-primary {
-    background: #003366 !important;
-    border: none !important;
-    color: #fff !important;
-    border-radius: 6px !important;
-    box-shadow: none !important;
-    transition: background 0.2s;
-  }
-  .fc-button:hover, .fc-button-primary:hover {
-    background: #185a8c !important;
-  }
-  .fc-daygrid-event, .fc-event {
-    background: #2176ae !important;
-    border: none !important;
-    color: #fff !important;
-    border-radius: 6px !important;
-    padding: 2px 6px;
-    font-size: 0.97rem;
-  }
-  .fc-today {
-    background: #e6f0ff !important;
-  }
-  .fc-scrollgrid, .fc-view-harness {
-    border-radius: 12px;
-    overflow: hidden;
-  }
+    .calendar-container {
+        padding: 20px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin: 20px auto;
+        max-width: 1200px;
+    }
+
+    .calendar-header {
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #003366;
+    }
+
+    .calendar-header h2 {
+        color: #003366;
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    #calendar {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+    }
+
+    /* Header Toolbar Styling */
+    .fc-toolbar-title {
+        color: #003366;
+        font-size: 1.4rem !important;
+        font-weight: 600 !important;
+        text-transform: capitalize;
+    }
+
+    .fc-button {
+        background: #003366 !important;
+        border: none !important;
+        color: #fff !important;
+        border-radius: 6px !important;
+        padding: 8px 16px !important;
+        font-weight: 500 !important;
+        text-transform: capitalize !important;
+        transition: all 0.2s ease !important;
+        box-shadow: 0 2px 4px rgba(0,51,102,0.1) !important;
+    }
+
+    .fc-button:hover {
+        background: #002244 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,51,102,0.15) !important;
+    }
+
+    .fc-button-active {
+        background: #002244 !important;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.1) !important;
+    }
+
+    /* Calendar Grid Styling */
+    .fc-theme-standard td, 
+    .fc-theme-standard th {
+        border-color: #e9ecef !important;
+    }
+
+    .fc-col-header-cell {
+        background: #f8f9fa !important;
+        padding: 10px 0 !important;
+    }
+
+    .fc-col-header-cell-cushion {
+        color: #003366 !important;
+        font-weight: 600 !important;
+        text-decoration: none !important;
+        padding: 8px !important;
+    }
+
+    /* Today Highlight */
+    .fc-day-today {
+        background: #e6f0ff !important;
+    }
+
+    /* Event Styling */
+    .fc-event {
+        border: none !important;
+        border-radius: 4px !important;
+        padding: 4px 8px !important;
+        margin: 2px 0 !important;
+        font-size: 0.9rem !important;
+        font-weight: 500 !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+    }
+
+    .fc-event-title {
+        font-weight: 500 !important;
+    }
+
+    .fc-event-time {
+        font-weight: 400 !important;
+    }
+
+    /* Event Colors */
+    .fc-event.Menunggu {
+        background: #ffc107 !important;
+        border-left: 4px solid #ffc107 !important;
+    }
+
+    .fc-event.Disetujui {
+        background: #28a745 !important;
+        border-left: 4px solid #28a745 !important;
+    }
+
+    .fc-event.Ditolak {
+        background: #dc3545 !important;
+        border-left: 4px solid #dc3545 !important;
+    }
+
+    /* Toolbar Layout Adjustments */
+    .fc-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px !important;
+    }
+
+    .fc-toolbar-chunk {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .fc-toolbar-title {
+        margin: 0 !important;
+        text-align: center;
+    }
+
+    /* Dropdown styling for view buttons */
+    .fc-button-group {
+        position: relative;
+    }
+
+    .fc-button-group .fc-button {
+        width: auto !important;
+        min-width: 100px;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .calendar-container {
+            padding: 10px;
+            margin: 10px;
+        }
+
+        .fc-toolbar {
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .fc-toolbar-chunk {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .fc-button {
+            padding: 6px 12px !important;
+            font-size: 0.9rem !important;
+        }
+    }
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: 'dayGridMonth',
-      events: {{ events|tojson|safe }},
-      headerToolbar: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-      },
-      height: 650,
-      eventDisplay: 'block',
-      dayMaxEventRows: 3,
-      fixedWeekCount: false,
-      nowIndicator: true,
-      selectable: false,
-      eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false }
+        initialView: 'dayGridMonth',
+        events: {{ events|tojson|safe }},
+        headerToolbar: {
+            left: 'prev,next',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        height: 700,
+        eventDisplay: 'block',
+        dayMaxEventRows: 4,
+        fixedWeekCount: false,
+        nowIndicator: true,
+        selectable: false,
+        eventTimeFormat: { 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            hour12: false 
+        },
+        eventDidMount: function(info) {
+            info.el.title = info.event.title;
+        },
+        eventClick: function(info) {
+            alert(info.event.title);
+        }
     });
     calendar.render();
-  });
+});
 </script>
 {% endblock %}

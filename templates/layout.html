@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
     <title>{% block title %}Sistem Reservasi Rapat{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -31,10 +32,11 @@
                 <li><a href="{{ url_for('dashboard_admin') }}">Dashboard</a></li>
                 <li><a href="{{ url_for('kelola_reservasi') }}">Kelola Reservasi</a></li>
                 <li><a href="{{ url_for('kelola_pegawai') }}">Kelola Pegawai</a></li>
+                <li><a href="{{ url_for('verifikasi_pengajuan') }}">Verifikasi Pengajuan</a></li>
                 <li><a href="{{ url_for('kalender') }}">Kalender Jadwal</a></li>
             {% else %}
                 <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
-                <li><a href="{{ url_for('ajukan_reservasi') }}">Reservasi</a></li>
+                <li><a href="{{ url_for('ajukan_reservasi') }}"> Ajukan Reservasi</a></li>
                 <li><a href="{{ url_for('reservasi_saya') }}">Reservasi Saya</a></li>
                 <li><a href="{{ url_for('jadwal') }}">Jadwal</a></li>
                 <li><a href="{{ url_for('kalender') }}">Kalender Jadwal</a></li>

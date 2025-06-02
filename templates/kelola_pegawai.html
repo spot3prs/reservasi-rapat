@@ -1,17 +1,127 @@
 {% extends 'layout.html' %}
 {% block content %}
+<style>
+    .container-pegawai {
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .header-section {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #003366;
+    }
+
+    .header-section h2 {
+        color: #003366;
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .btn-primary {
+        background: #003366;
+        border-color: #003366;
+        padding: 8px 16px;
+        font-weight: 500;
+        transition: background-color 0.2s;
+    }
+
+    .btn-primary:hover {
+        background: #002244;
+        border-color: #002244;
+    }
+
+    .table-responsive {
+        margin-top: 20px;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .pegawai-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+    }
+
+    .pegawai-table thead {
+        background-color: #003366;
+        color: white;
+    }
+
+    .pegawai-table th {
+        padding: 12px 15px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .pegawai-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+        font-size: 0.95rem;
+    }
+
+    .pegawai-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .dropdown-toggle {
+        background: #003366;
+        border-color: #003366;
+        padding: 6px 12px;
+        font-size: 0.9rem;
+    }
+
+    .dropdown-toggle:hover {
+        background: #002244;
+        border-color: #002244;
+    }
+
+    .dropdown-menu {
+        border: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .dropdown-item {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .text-warning {
+        color: #003366 !important;
+    }
+
+    .text-danger {
+        color: #dc3545 !important;
+    }
+</style>
+
 <div class="container-pegawai">
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-        <h2 style="margin: 0;">Kelola Data Pegawai</h2>
-        <a href="{{ url_for('tambah_pegawai') }}" class="btn btn-primary" style="background:#003366; border-color:#003366;">Tambah Pegawai</a>
+    <div class="header-section">
+        <h2><i class="fas fa-users"></i> Kelola Data Pegawai</h2>
+        <a href="{{ url_for('tambah_pegawai') }}" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i> Tambah Pegawai
+        </a>
     </div>
+
     <div class="table-responsive">
         <table class="pegawai-table">
             <thead>
                 <tr>
                     <th>ID</th>
+                    <th>NIP</th>
                     <th>Nama</th>
-                    <th style="text-align: center;">Nomor Telepon</th>
+                    <th>Nomor WhatsApp</th>
                     <th style="text-align: center;">Aksi</th>
                 </tr>
             </thead>
@@ -19,20 +129,28 @@
                 {% for p in pegawai %}
                 <tr>
                     <td>{{ p.id }}</td>
+                    <td>{{ p.nip }}</td>
                     <td>{{ p.nama }}</td>
-                    <td style="text-align: center;">{{ p.no_wa }}</td>
+                    <td>{{ p.no_wa }}</td>
                     <td style="text-align: center;">
                         <div class="dropdown">
                             <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Pilih Aksi
+                                <i class="fas fa-ellipsis-v"></i> Aksi
                             </button>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a class="dropdown-item" href="{{ url_for('edit_pegawai', id=p.id) }}">Edit</a>
+                                    <a class="dropdown-item text-warning" href="{{ url_for('edit_pegawai', id=p.id) }}">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
                                 </li>
                                 <li>
-                                    <form action="{{ url_for('hapus_pegawai', id=p.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus pegawai ini?')">
-                                        <button type="submit" class="dropdown-item text-danger">Hapus</button>
+                                    <form action="{{ url_for('hapus_pegawai', id=p.id) }}" 
+                                          method="post" 
+                                          style="display:inline;" 
+                                          onsubmit="return confirm('Yakin ingin menghapus pegawai ini?')">
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="fas fa-trash"></i> Hapus
+                                        </button>
                                     </form>
                                 </li>
                             </ul>

@@ -1,13 +1,76 @@
 {% extends 'layout.html' %}
 {% block content %}
-<h2>Edit Data Pegawai</h2>
-<form method="POST">
-    <label>Nama:</label><br>
-    <input type="text" name="nama" value="{{ user.nama }}" required><br><br>
+<div class="dashboard-container">
+    <!-- Pesan flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" style="margin-bottom: 18px;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
-    <label>Password baru (kosongkan jika tidak ingin diubah):</label><br>
-    <input type="password" name="password"><br><br>
+    <h2 class="dashboard-title mb-1" style="font-size: 1.6rem; font-weight: 600; text-align: left; margin: 0;">
+        Edit Data Pegawai
+    </h2>
 
-    <button type="submit">Simpan Perubahan</button>
-</form>
+    <div class="table-section" style="margin-top: 20px;">
+        <div class="card shadow" style="border: none; border-radius: 8px;">
+            <div class="card-body" style="padding: 24px;">
+                <form method="POST" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label for="nama" class="form-label" style="font-weight: 500; color: #333;">Nama Lengkap</label>
+                        <input type="text" class="form-control" id="nama" name="nama" value="{{ user.nama }}" required
+                            style="padding: 8px 12px; border-radius: 4px; border: 1px solid #ccc;">
+                        <div class="invalid-feedback">
+                            Mohon isi nama lengkap
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label" style="font-weight: 500; color: #333;">Password Baru</label>
+                        <input type="password" class="form-control" id="password" name="password" 
+                            placeholder="Kosongkan jika tidak ingin mengubah password"
+                            style="padding: 8px 12px; border-radius: 4px; border: 1px solid #ccc;">
+                        <div class="form-text text-muted" style="font-size: 0.875rem; margin-top: 4px;">
+                            Biarkan kosong jika tidak ingin mengubah password
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary me-md-2" 
+                            style="padding: 8px 16px; border-radius: 4px; background: #6c757d; color: #fff; border: none; cursor: pointer;">
+                            Kembali
+                        </a>
+                        <button type="submit" class="btn btn-primary"
+                            style="padding: 8px 16px; border-radius: 4px; background: #2176ae; color: #fff; border: none; cursor: pointer; min-width: 0; box-shadow: 0 1px 4px rgba(33,118,174,0.07); transition: background 0.2s;"
+                            onmouseover="this.style.background='#185a8c'"
+                            onmouseout="this.style.background='#2176ae'">
+                            <i class="fas fa-save me-1"></i> Simpan Perubahan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Form validation
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+</script>
 {% endblock %}

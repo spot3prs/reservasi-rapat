@@ -1,212 +1,154 @@
-{% extends 'layout.html' %}
+{% extends "layout.html" %}
+
+{% block title %}Kelola Pengajuan | Komnas HAM RI{% endblock %}
+
 {% block content %}
 <style>
-    /* Hide sidebar and toggle for this page */
-    #sidebar-wrapper,
-    #sidebarToggle {
-        display: none !important;
+    .card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 24px;
     }
-    
-    /* Adjust main content to full width */
-    #page-content-wrapper {
-        margin-left: 0 !important;
-        width: 100% !important;
+    .card-header {
+        background: #003366;
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px 8px 0 0;
+    }
+    .card-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 500;
+    }
+    .card-body {
+        padding: 24px;
+    }
+    .table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    .table th {
+        background: #f8f9fa;
+        color: #495057;
+        font-weight: 600;
+        padding: 12px 16px;
+        border-bottom: 2px solid #dee2e6;
+    }
+    .table td {
+        padding: 12px 16px;
+        vertical-align: middle;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    .badge {
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+    .badge-menunggu {
+        background: #ffc107;
+        color: #000;
+    }
+    .badge-disetujui {
+        background: #28a745;
+        color: #fff;
+    }
+    .badge-ditolak {
+        background: #dc3545;
+        color: #fff;
+    }
+    .btn-success {
+        background: #28a745;
+        border: none;
+    }
+    .btn-success:hover {
+        background: #218838;
+    }
+    .btn-danger {
+        background: #dc3545;
+        border: none;
+    }
+    .btn-danger:hover {
+        background: #c82333;
+    }
+    .btn-info {
+        background: #17a2b8;
+        border: none;
+        color: #fff;
+    }
+    .btn-info:hover {
+        background: #138496;
+    }
+    .btn-sm {
+        padding: 6px 12px;
+        font-size: 0.875rem;
+    }
+    .action-buttons {
+        display: flex;
+        gap: 8px;
     }
 </style>
 
-<div class="dashboard-container">
-    <h2 class="dashboard-title"><i class="fas fa-user-check"></i> Verifikasi Pengajuan Akun</h2>
-
-    <div class="table-section">
-        <table class="styled-table">
-            <thead>
-                <tr>
-                    <th>NIP</th>
-                    <th>Nama</th>
-                    <th>No. WhatsApp</th>
-                    <th>Tanggal Pengajuan</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for p in pengajuan %}
-                <tr>
-                    <td>{{ p.nip }}</td>
-                    <td>{{ p.nama }}</td>
-                    <td>{{ p.no_wa }}</td>
-                    <td>{{ p.tanggal_pengajuan.strftime('%d-%m-%Y %H:%M') }}</td>
-                    <td>
-                        <span class="status-badge status-{{ p.status|lower }}">
-                            {{ p.status|upper }}
-                        </span>
-                    </td>
-                    <td>
-                        {% if p.status == 'Menunggu' %}
-                        <div class="btn-group">
-                            <a href="{{ url_for('view_pdf', filename=p.file_surat) }}" 
-                               class="btn btn-sm download-btn">
-                                <i class="fas fa-download"></i> Unduh Surat
-                            </a>
-                            <form action="{{ url_for('setujui_pengajuan', id=p.id) }}" 
-                                  method="post" 
-                                  style="display: inline;">
-                                <button type="submit" 
-                                        class="btn btn-success btn-sm"
-                                        onclick="return confirm('Setujui pengajuan ini?')">
-                                    <i class="fas fa-check"></i> Setujui
-                                </button>
-                            </form>
-                            <form action="{{ url_for('tolak_pengajuan', id=p.id) }}" 
-                                  method="post" 
-                                  style="display: inline;">
-                                <button type="submit" 
-                                        class="btn btn-danger btn-sm"
-                                        onclick="return confirm('Tolak pengajuan ini?')">
-                                    <i class="fas fa-times"></i> Tolak
-                                </button>
-                            </form>
-                        </div>
-                        {% endif %}
-                    </td>
-                </tr>
-
-                <!-- Modal Surat -->
-                <div class="modal fade" id="suratModal{{ p.id }}" tabindex="-1">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Surat Pengajuan - {{ p.nama }}</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <p><strong>NIP:</strong> {{ p.nip }}</p>
-                                <p><strong>Tanggal Pengajuan:</strong> {{ p.tanggal_pengajuan.strftime('%d-%m-%Y %H:%M') }}</p>
-                                <hr>
-                                <p><strong>Isi Surat:</strong></p>
-                                <div class="surat-content">
-                                    {{ p.isi_surat|nl2br }}
-                                </div>
+<div class="card">
+    <div class="card-header">
+        <h2>Kelola Pengajuan Akun</h2>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>NIP</th>
+                        <th>Nama</th>
+                        <th>No. WhatsApp</th>
+                        <th>Tanggal Pengajuan</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in pengajuan %}
+                    <tr>
+                        <td>{{ p.nip }}</td>
+                        <td>{{ p.nama }}</td>
+                        <td>{{ p.no_wa }}</td>
+                        <td>{{ p.tanggal_pengajuan }}</td>
+                        <td>
+                            <span class="badge badge-{{ p.status|lower }}">
+                                {{ p.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                {% if p.status == 'Menunggu' %}
+                                <form action="{{ url_for('setujui_pengajuan', id=p.id) }}" method="POST" style="display: inline;">
+                                    <button type="submit" class="btn btn-success btn-sm">
+                                        <i class="fas fa-check"></i> Setujui
+                                    </button>
+                                </form>
+                                <form action="{{ url_for('tolak_pengajuan', id=p.id) }}" method="POST" style="display: inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-times"></i> Tolak
+                                    </button>
+                                </form>
+                                {% endif %}
                                 {% if p.file_surat %}
-                                <hr>
-                                <p><strong>Lampiran Surat:</strong></p>
-                                <p>
-                                    <a href="{{ url_for('view_pdf', filename=p.file_surat) }}" 
-                                       class="btn btn-sm download-btn">
-                                        <i class="fas fa-download"></i> Unduh File PDF
-                                    </a>
-                                </p>
+                                <a href="{{ url_for('view_pdf', filename=p.file_surat) }}" class="btn btn-info btn-sm" target="_blank">
+                                    <i class="fas fa-file-pdf"></i> Lihat Surat
+                                </a>
                                 {% endif %}
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </tbody>
-        </table>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
-
-<style>
-.dashboard-container {
-    padding: 20px;
-}
-.dashboard-title {
-    color: #003366;
-    margin-bottom: 1.5rem;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #003366;
-}
-.table-section {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.08);
-    padding: 1rem;
-}
-.styled-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 0;
-    font-size: 0.9em;
-}
-.styled-table thead tr {
-    background-color: #003366;
-    color: #fff;
-    text-align: left;
-    font-weight: 600;
-}
-.styled-table th,
-.styled-table td {
-    padding: 12px 15px;
-    border-bottom: 1px solid #dee2e6;
-}
-.styled-table tbody tr:hover {
-    background-color: #f8f9fa;
-}
-.btn-group {
-    display: flex;
-    gap: 5px;
-    align-items: center;
-}
-.surat-content {
-    background: #f8f9fa;
-    padding: 1rem;
-    border-radius: 4px;
-    white-space: pre-line;
-}
-.status-badge {
-    padding: 0.5em 0.8em;
-    border-radius: 4px;
-    font-weight: 500;
-    font-size: 0.85em;
-}
-.status-menunggu {
-    background-color: #ffc107;
-    color: #000;
-}
-.status-disetujui {
-    background-color: #28a745;
-    color: #fff;
-}
-.status-ditolak {
-    background-color: #dc3545;
-    color: #fff;
-}
-.download-btn {
-    background-color: #003366;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    transition: background-color 0.2s;
-}
-.download-btn:hover {
-    background-color: #002244;
-    color: white;
-    text-decoration: none;
-}
-.btn-success {
-    background-color: #28a745;
-    border-color: #28a745;
-}
-.btn-danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
-}
-.btn-success:hover {
-    background-color: #218838;
-    border-color: #1e7e34;
-}
-.btn-danger:hover {
-    background-color: #c82333;
-    border-color: #bd2130;
-}
-</style>
 {% endblock %}

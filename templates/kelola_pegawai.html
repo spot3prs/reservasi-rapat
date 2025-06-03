@@ -1,165 +1,140 @@
-{% extends 'layout.html' %}
+{% extends "layout.html" %}
+
+{% block title %}Kelola Pegawai | Komnas HAM RI{% endblock %}
+
 {% block content %}
 <style>
-    .container-pegawai {
-        padding: 20px;
+    .card {
         background: #fff;
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 24px;
     }
-
-    .header-section {
+    .card-header {
+        background: #003366;
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px 8px 0 0;
         display: flex;
-        align-items: center;
         justify-content: space-between;
-        margin-bottom: 20px;
-        padding-bottom: 15px;
-        border-bottom: 2px solid #003366;
+        align-items: center;
     }
-
-    .header-section h2 {
-        color: #003366;
-        font-size: 1.8rem;
-        font-weight: 600;
+    .card-header h2 {
         margin: 0;
+        font-size: 1.5rem;
+        font-weight: 500;
     }
-
+    .card-body {
+        padding: 24px;
+    }
+    .table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    .table th {
+        background: #f8f9fa;
+        color: #495057;
+        font-weight: 600;
+        padding: 12px 16px;
+        border-bottom: 2px solid #dee2e6;
+    }
+    .table td {
+        padding: 12px 16px;
+        vertical-align: middle;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
     .btn-primary {
         background: #003366;
-        border-color: #003366;
+        border: none;
         padding: 8px 16px;
-        font-weight: 500;
-        transition: background-color 0.2s;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
     }
-
     .btn-primary:hover {
         background: #002244;
-        border-color: #002244;
     }
-
-    .table-responsive {
-        margin-top: 20px;
-        border-radius: 8px;
-        overflow: hidden;
-    }
-
-    .pegawai-table {
-        width: 100%;
-        border-collapse: collapse;
-        background: white;
-    }
-
-    .pegawai-table thead {
-        background-color: #003366;
-        color: white;
-    }
-
-    .pegawai-table th {
-        padding: 12px 15px;
-        text-align: left;
-        font-weight: 600;
-        font-size: 0.95rem;
-    }
-
-    .pegawai-table td {
-        padding: 12px 15px;
-        border-bottom: 1px solid #eee;
-        font-size: 0.95rem;
-    }
-
-    .pegawai-table tbody tr:hover {
-        background-color: #f8f9fa;
-    }
-
-    .dropdown-toggle {
-        background: #003366;
-        border-color: #003366;
-        padding: 6px 12px;
-        font-size: 0.9rem;
-    }
-
-    .dropdown-toggle:hover {
-        background: #002244;
-        border-color: #002244;
-    }
-
-    .dropdown-menu {
+    .btn-warning {
+        background: #ffc107;
         border: none;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        color: #000;
     }
-
-    .dropdown-item {
-        padding: 8px 16px;
-        font-size: 0.9rem;
+    .btn-warning:hover {
+        background: #e0a800;
     }
-
-    .dropdown-item:hover {
-        background-color: #f8f9fa;
+    .btn-danger {
+        background: #dc3545;
+        border: none;
     }
-
-    .text-warning {
-        color: #003366 !important;
+    .btn-danger:hover {
+        background: #c82333;
     }
-
-    .text-danger {
-        color: #dc3545 !important;
+    .btn-sm {
+        padding: 6px 12px;
+        font-size: 0.875rem;
+        min-width: 70px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        width: 100%;
+    }
+    .action-buttons form {
+        display: inline-flex;
     }
 </style>
 
-<div class="container-pegawai">
-    <div class="header-section">
-        <h2><i class="fas fa-users"></i> Kelola Data Pegawai</h2>
+<div class="card">
+    <div class="card-header">
+        <h2>Kelola Pegawai</h2>
         <a href="{{ url_for('tambah_pegawai') }}" class="btn btn-primary">
-            <i class="fas fa-user-plus"></i> Tambah Pegawai
+            <i class="fas fa-plus"></i> Tambah Pegawai
         </a>
     </div>
-
-    <div class="table-responsive">
-        <table class="pegawai-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>NIP</th>
-                    <th>Nama</th>
-                    <th>Nomor WhatsApp</th>
-                    <th style="text-align: center;">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for p in pegawai %}
-                <tr>
-                    <td>{{ p.id }}</td>
-                    <td>{{ p.nip }}</td>
-                    <td>{{ p.nama }}</td>
-                    <td>{{ p.no_wa }}</td>
-                    <td style="text-align: center;">
-                        <div class="dropdown">
-                            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-ellipsis-v"></i> Aksi
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item text-warning" href="{{ url_for('edit_pegawai', id=p.id) }}">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </a>
-                                </li>
-                                <li>
-                                    <form action="{{ url_for('hapus_pegawai', id=p.id) }}" 
-                                          method="post" 
-                                          style="display:inline;" 
-                                          onsubmit="return confirm('Yakin ingin menghapus pegawai ini?')">
-                                        <button type="submit" class="dropdown-item text-danger">
-                                            <i class="fas fa-trash"></i> Hapus
-                                        </button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>NIP</th>
+                        <th>Nama</th>
+                        <th>No. WhatsApp</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in pegawai %}
+                    <tr>
+                        <td>{{ p.nip }}</td>
+                        <td>{{ p.nama }}</td>
+                        <td>{{ p.no_wa }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{{ url_for('edit_pegawai', id=p.id) }}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <form action="{{ url_for('hapus_pegawai', id=p.id) }}" method="POST" style="display: inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus pegawai ini?')">
+                                        <i class="fas fa-trash"></i> Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

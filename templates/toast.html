@@ -1,0 +1,83 @@
+<!-- Toast Notification -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div id="toast" class="toast {{ category }}">
+                {% if category == 'success' %}
+                    <i class="fas fa-check-circle toast-icon"></i>
+                {% elif category == 'error' or category == 'danger' %}
+                    <i class="fas fa-exclamation-circle toast-icon"></i>
+                {% elif category == 'warning' %}
+                    <i class="fas fa-exclamation-triangle toast-icon"></i>
+                {% else %}
+                    <i class="fas fa-info-circle toast-icon"></i>
+                {% endif %}
+                <div class="toast-content">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<style>
+.toast {
+    visibility: hidden;
+    min-width: 300px;
+    background-color: #2176ae;
+    color: #fff;
+    text-align: left;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed;
+    z-index: 9999;
+    right: 20px;
+    top: 20px;
+    font-size: 1rem;
+    box-shadow: 0 2px 8px rgba(33,118,174,0.15);
+    opacity: 0;
+    transition: opacity 0.4s, transform 0.4s;
+    transform: translateX(100%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(0);
+}
+.toast.success {
+    background-color: #28a745;
+    border-left: 4px solid #1e7e34;
+}
+.toast.error, .toast.danger {
+    background-color: #dc3545;
+    border-left: 4px solid #bd2130;
+}
+.toast.warning {
+    background-color: #ffc107;
+    color: #000;
+    border-left: 4px solid #d39e00;
+}
+.toast.info {
+    background-color: #2176ae;
+    border-left: 4px solid #185a8c;
+}
+.toast-icon {
+    font-size: 1.2rem;
+}
+.toast-content {
+    flex: 1;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toast = document.getElementById('toast');
+    if (toast) {
+        toast.classList.add('show');
+        setTimeout(function() {
+            toast.classList.remove('show');
+        }, 5000); // Hide after 5 seconds
+    }
+});
+</script> 

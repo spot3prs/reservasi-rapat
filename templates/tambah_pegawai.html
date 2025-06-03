@@ -1,163 +1,140 @@
-{% extends 'layout.html' %}
+{% extends "layout.html" %}
+
+{% block title %}Tambah Pegawai | Komnas HAM RI{% endblock %}
+
 {% block content %}
 <style>
-    .form-container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
+    .card {
         background: #fff;
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 24px;
     }
-
-    .form-header {
-        margin-bottom: 30px;
-        padding-bottom: 15px;
-        border-bottom: 2px solid #003366;
+    .card-header {
+        background: #003366;
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px 8px 0 0;
     }
-
-    .form-header h2 {
-        color: #003366;
-        font-size: 1.8rem;
-        font-weight: 600;
+    .card-header h2 {
         margin: 0;
+        font-size: 1.5rem;
+        font-weight: 500;
     }
-
+    .card-body {
+        padding: 24px;
+    }
     .form-group {
         margin-bottom: 20px;
     }
-
     .form-group label {
         display: block;
         margin-bottom: 8px;
-        color: #333;
+        color: #495057;
         font-weight: 500;
     }
-
-    .form-control {
+    .form-group input,
+    .form-group select {
         width: 100%;
-        padding: 10px 12px;
-        border: 1px solid #ddd;
+        padding: 10px;
+        border: 1px solid #ced4da;
         border-radius: 4px;
         font-size: 1rem;
-        transition: border-color 0.2s;
+        transition: border-color 0.15s ease-in-out;
     }
-
-    .form-control:focus {
+    .form-group input:focus,
+    .form-group select:focus {
         border-color: #003366;
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(0,51,102,0.1);
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 51, 102, 0.25);
     }
-
-    .form-select {
-        width: 100%;
-        padding: 10px 12px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 1rem;
-        background-color: #fff;
-        cursor: pointer;
+    .form-text {
+        display: block;
+        margin-top: 4px;
+        color: #6c757d;
+        font-size: 0.875rem;
     }
-
-    .submit-btn {
-        background-color: #003366;
-        color: white;
-        padding: 12px 24px;
-        border: none;
+    .form-actions {
+        margin-top: 24px;
+        display: flex;
+        gap: 12px;
+    }
+    .btn {
+        padding: 10px 20px;
         border-radius: 4px;
         font-size: 1rem;
         font-weight: 500;
         cursor: pointer;
-        transition: background-color 0.2s;
-        width: 100%;
-        max-width: 200px;
-        margin-top: 10px;
+        transition: all 0.15s ease-in-out;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
     }
-
-    .submit-btn:hover {
-        background-color: #002244;
+    .btn-primary {
+        background: #003366;
+        border: none;
+        color: white;
     }
-
-    .form-footer {
-        margin-top: 30px;
-        text-align: center;
+    .btn-primary:hover {
+        background: #002244;
     }
-
-    .form-note {
-        margin-top: 20px;
-        padding: 15px;
-        background-color: #f8f9fa;
-        border-radius: 4px;
-        font-size: 0.9rem;
-        color: #666;
+    .btn-secondary {
+        background: #6c757d;
+        border: none;
+        color: white;
+        text-decoration: none;
+    }
+    .btn-secondary:hover {
+        background: #5a6268;
+        color: white;
     }
 </style>
 
-<div class="form-container">
-    <div class="form-header">
-        <h2><i class="fas fa-user-plus"></i> Tambah Pegawai Baru</h2>
+<div class="card">
+    <div class="card-header">
+        <h2>Tambah Pegawai Baru</h2>
     </div>
+    <div class="card-body">
+        <form method="POST">
+            <div class="form-group">
+                <label for="nip">NIP</label>
+                <input type="text" name="nip" id="nip" required>
+            </div>
 
-    <form method="POST">
-        <div class="form-group">
-            <label for="nip"><i class="fas fa-id-card"></i> NIP</label>
-            <input type="text" 
-                   id="nip" 
-                   name="nip" 
-                   class="form-control" 
-                   required 
-                   pattern="[0-9]+"
-                   placeholder="Masukkan NIP pegawai">
-        </div>
+            <div class="form-group">
+                <label for="nama">Nama</label>
+                <input type="text" name="nama" id="nama" required>
+            </div>
 
-        <div class="form-group">
-            <label for="nama"><i class="fas fa-user"></i> Nama Lengkap</label>
-            <input type="text" 
-                   id="nama" 
-                   name="nama" 
-                   class="form-control" 
-                   required
-                   placeholder="Masukkan nama lengkap pegawai">
-        </div>
+            <div class="form-group">
+                <label for="no_wa">Nomor WhatsApp</label>
+                <input type="text" name="no_wa" id="no_wa" required>
+                <small class="form-text">Contoh: 08123456789 (tanpa awalan 0 atau +62)</small>
+            </div>
 
-        <div class="form-group">
-            <label for="no_wa"><i class="fab fa-whatsapp"></i> Nomor WhatsApp</label>
-            <input type="text" 
-                   id="no_wa" 
-                   name="no_wa" 
-                   class="form-control"
-                   pattern="[0-9]+"
-                   placeholder="Contoh: 62**********">
-        </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" required>
+            </div>
 
-        <div class="form-group">
-            <label for="password"><i class="fas fa-lock"></i> Password</label>
-            <input type="password" 
-                   id="password" 
-                   name="password" 
-                   class="form-control" 
-                   required
-                   placeholder="Masukkan password">
-        </div>
+            <div class="form-group">
+                <label for="role">Role</label>
+                <select name="role" id="role" required>
+                    <option value="pegawai">Pegawai</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
 
-        <div class="form-group">
-            <label for="role"><i class="fas fa-user-tag"></i> Role</label>
-            <select id="role" name="role" class="form-select" required>
-                <option value="">Pilih Role</option>
-                <option value="pegawai">Pegawai</option>
-                <option value="admin">Admin</option>
-            </select>
-        </div>
-
-        <div class="form-footer">
-            <button type="submit" class="submit-btn">
-                <i class="fas fa-save"></i> Simpan Data
-            </button>
-        </div>
-    </form>
-
-    <div class="form-note">
-        <p><i class="fas fa-info-circle"></i> Pastikan data yang dimasukkan sudah benar dan lengkap.</p>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> Tambah Pegawai
+                </button>
+                <a href="{{ url_for('kelola_pegawai') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Kembali
+                </a>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}

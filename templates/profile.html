@@ -1,0 +1,130 @@
+{% extends "layout.html" %}
+
+{% block title %}Profil | Komnas HAM RI{% endblock %}
+
+{% block content %}
+<style>
+    .profile-card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 24px;
+    }
+    .profile-card .card-header {
+        background: #003366;
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px 8px 0 0;
+    }
+    .profile-card .card-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 500;
+    }
+    .profile-card .card-body {
+        padding: 24px;
+    }
+    .info-group {
+        margin-bottom: 20px;
+    }
+    .info-group label {
+        display: block;
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 4px;
+    }
+    .info-group p {
+        margin: 0;
+        font-size: 1.1rem;
+        color: #333;
+        font-weight: 500;
+    }
+    .change-password-form {
+        border-top: 1px solid #eee;
+        padding-top: 24px;
+        margin-top: 24px;
+    }
+    .change-password-form h3 {
+        color: #003366;
+        margin-bottom: 20px;
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #666;
+    }
+    .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+    }
+    .form-actions {
+        margin-top: 24px;
+    }
+    .btn-primary {
+        background: #003366;
+        border: none;
+        padding: 10px 24px;
+        font-size: 1rem;
+    }
+    .btn-primary:hover {
+        background: #002244;
+    }
+</style>
+
+<div class="profile-card">
+    <div class="card-header">
+        <h2>Profil Pengguna</h2>
+    </div>
+    <div class="card-body">
+        <div class="profile-info">
+            <div class="info-group">
+                <label>NIP</label>
+                <p>{{ user.nip }}</p>
+            </div>
+            <div class="info-group">
+                <label>Nama</label>
+                <p>{{ user.nama }}</p>
+            </div>
+            <div class="info-group">
+                <label>No. WhatsApp</label>
+                <p>{{ user.no_wa }}</p>
+            </div>
+            <div class="info-group">
+                <label>Role</label>
+                <p>{{ user.role|title }}</p>
+            </div>
+        </div>
+
+        <form method="POST" class="change-password-form">
+            <h3>Ubah Password</h3>
+            
+            <div class="form-group">
+                <label for="current_password">Password Saat Ini</label>
+                <input type="password" name="current_password" id="current_password" required>
+            </div>
+
+            <div class="form-group">
+                <label for="new_password">Password Baru</label>
+                <input type="password" name="new_password" id="new_password" required>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Konfirmasi Password Baru</label>
+                <input type="password" name="confirm_password" id="confirm_password" required>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Ubah Password</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

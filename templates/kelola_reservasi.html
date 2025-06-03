@@ -1,176 +1,252 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<div class="dashboard-container">
+<div class="dashboard-container" style="padding: 24px; background: #f8f9fa; min-height: 100vh;">
     <!-- Pesan flash -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
-                <div class="alert alert-{{ category }}" style="margin-bottom: 18px;">
+                <div class="alert alert-{{ category }}" style="margin-bottom: 24px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                     {{ message }}
                 </div>
             {% endfor %}
         {% endif %}
     {% endwith %}
 
-    <div style="margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
-        <h2 class="dashboard-title mb-1" style="font-size: 1.6rem; font-weight: 600; text-align: left; margin: 0;">
+    <div style="margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <h2 class="dashboard-title mb-1" style="font-size: 1.8rem; font-weight: 600; color: #2c3e50; margin: 0;">
             Laporan Reservasi
         </h2>
-        <form action="{{ url_for('kirim_pengingat_sekarang') }}" method="post" style="margin: 0;">
-            <button type="submit"
-                style="
-                    padding: 4px 14px;
-                    font-size: 0.95rem;
-                    border-radius: 4px;
-                    background: #2176ae;
-                    color: #fff;
-                    border: none;
-                    cursor: pointer;
-                    min-width: 0;
-                    box-shadow: 0 1px 4px rgba(33,118,174,0.07);
-                    transition: background 0.2s;
-                "
-                onmouseover="this.style.background='#185a8c'"
-                onmouseout="this.style.background='#2176ae'">
-                &#128276; Kirim Pengingat
-            </button>
-        </form>
     </div>
 
     <!-- Form Export Laporan -->
-    <form action="{{ url_for('export_laporan') }}" method="get" class="mb-3" style="margin-bottom:18px; display: flex; align-items: center; gap: 10px;">
-        <label for="start_date">Tanggal Mulai:</label>
-        <input type="date" id="start_date" name="start_date" required>
-        <label for="end_date">Tanggal Akhir:</label>
-        <input type="date" id="end_date" name="end_date" required>
-        <button type="submit" name="format" value="pdf" class="btn btn-danger" style="padding: 6px 18px; border-radius: 4px; background: #dc3545; color: #fff; border: none; cursor: pointer;">Export PDF</button>
-        <button type="submit" name="format" value="excel" class="btn btn-success" style="padding: 6px 18px; border-radius: 4px; background: #28a745; color: #fff; border: none; cursor: pointer;">Export Excel</button>
-    </form>
-    <h2 class="dashboard-title mb-1" style="font-size: 1.6rem; font-weight: 600; text-align: left; margin: 0; margin-top: 20px;">
-        Cari & Filter
-    </h2>
-    <!-- Search dan Filter -->
-    <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
-        <input type="text" id="searchInput" placeholder="Cari reservasi..." style="padding: 6px 12px; border-radius: 4px; border: 1px solid #ccc; min-width: 180px;">
-        <select id="statusFilter" style="padding: 6px 12px; border-radius: 4px; border: 1px solid #ccc; min-width: 140px;">
-            <option value="">Semua Status</option>
-            <option value="Menunggu">Menunggu</option>
-            <option value="Disetujui">Disetujui</option>
-            <option value="Ditolak">Ditolak</option>
-        </select>
-        <select id="ruanganFilter" style="padding: 6px 12px; border-radius: 4px; border: 1px solid #ccc; min-width: 140px;">
-            <option value="">Semua Ruangan</option>
-            {% for r in reservasi|map(attribute='nama_ruangan')|unique %}
-            <option value="{{ r }}">{{ r }}</option>
-            {% endfor %}
-        </select>
+    <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <form action="{{ url_for('export_laporan') }}" method="get" class="mb-3" style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <label for="start_date" style="font-weight: 500; color: #2c3e50;">Tanggal Mulai:</label>
+                <input type="date" id="start_date" name="start_date" required style="padding: 8px 12px; border-radius: 6px; border: 1px solid #e0e0e0; outline: none;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <label for="end_date" style="font-weight: 500; color: #2c3e50;">Tanggal Akhir:</label>
+                <input type="date" id="end_date" name="end_date" required style="padding: 8px 12px; border-radius: 6px; border: 1px solid #e0e0e0; outline: none;">
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button type="submit" name="format" value="pdf" class="btn btn-danger" style="padding: 8px 20px; border-radius: 8px; background: #dc3545; color: #fff; border: none; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-file-pdf"></i> Export PDF
+                </button>
+                <button type="submit" name="format" value="excel" class="btn btn-success" style="padding: 8px 20px; border-radius: 8px; background: #28a745; color: #fff; border: none; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-file-excel"></i> Export Excel
+                </button>
+            </div>
+        </form>
     </div>
 
-    <div class="table-responsive">
-        <table class="styled-table">
-            <thead>
-                <tr>
-                    <th>
-                        <input type="checkbox" id="checkAll">
-                    </th>
-                    <th>ID</th>
-                    <th>Nama Pegawai</th>
-                    <th>Ruangan</th>
-                    <th>Tanggal</th>
-                    <th>Waktu Mulai</th>
-                    <th>Waktu Selesai</th>
-                    <th>Kegiatan</th>
-                    <th>Lampiran</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for r in reservasi %}
-                <tr>
-                    <td>
-                        <input type="checkbox" name="ids" value="{{ r.id }}">
-                    </td>
-                    <td>{{ r.id }}</td>
-                    <td>{{ r.nama }}</td>
-                    <td>{{ r.nama_ruangan }}</td>
-                    <td>{{ r.tanggal }}</td>
-                    <td>{{ r.waktu_mulai }}</td>
-                    <td>{{ r.waktu_selesai }}</td>
-                    <td>{{ r.kegiatan }}</td>
-                    <td>
-                        {% if r.lampiran %}
-                        <a href="{{ url_for('static', filename='uploads/' + r.lampiran) }}" 
-                           target="_blank"
-                           style="color: #2176ae; text-decoration: none;">
-                            <i class="fas fa-file-alt"></i> Lihat
-                        </a>
-                        {% else %}
-                        <span style="color: #999;">-</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <span class="status {{ r.status|lower }}">{{ r.status }}</span>
-                    </td>
-                    <td>
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Pilih Aksi
-                            </button>
-                            <ul class="dropdown-menu">
-                                {% if r.status == 'Menunggu' %}
-                                <li>
-                                    <form action="{{ url_for('setujui_reservasi', id=r.id) }}" method="post" style="display:inline;">
-                                        <button type="submit" class="dropdown-item text-success">Setujui</button>
-                                    </form>
-                                </li>
-                                <li>
-                                    <form action="{{ url_for('tolak_reservasi', id=r.id) }}" method="post" style="display:inline;">
-                                        <button type="submit" class="dropdown-item text-danger">Tolak</button>
-                                    </form>
-                                </li>
-                                {% endif %}
-                                <li>
-                                    <form action="{{ url_for('hapus_reservasi', id=r.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus reservasi ini?')">
-                                        <button type="submit" class="dropdown-item text-warning">Hapus</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
+    <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <h2 class="dashboard-title mb-1" style="font-size: 1.6rem; font-weight: 600; color: #003366; margin: 0 0 20px 0;">
+            Cari & Filter
+        </h2>
+        <!-- Search dan Filter -->
+        <div style="display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;">
+            <div style="position: relative; flex: 1; min-width: 200px;">
+                <input type="text" id="searchInput" placeholder="Cari reservasi..." style="width: 100%; padding: 10px 16px; border-radius: 8px; border: 1px solid #e0e0e0; outline: none; transition: all 0.3s ease;">
+            </div>
+            <select id="statusFilter" style="padding: 10px 16px; border-radius: 8px; border: 1px solid #e0e0e0; outline: none; min-width: 160px; background: white;">
+                <option value="">Semua Status</option>
+                <option value="Menunggu">Menunggu</option>
+                <option value="Disetujui">Disetujui</option>
+                <option value="Ditolak">Ditolak</option>
+            </select>
+            <select id="ruanganFilter" style="padding: 10px 16px; border-radius: 8px; border: 1px solid #e0e0e0; outline: none; min-width: 160px; background: white;">
+                <option value="">Semua Ruangan</option>
+                {% for r in reservasi|map(attribute='nama_ruangan')|unique %}
+                <option value="{{ r }}">{{ r }}</option>
                 {% endfor %}
-            </tbody>
-        </table>
-    </div>
+            </select>
+        </div>
 
-    <!-- Form untuk pengingat terpilih -->
-    <form id="form-checkbox-pengingat" action="{{ url_for('kirim_pengingat_terpilih') }}" method="post" style="margin-top: 12px;">
-        <button id="btn-pengingat-terpilih" type="submit"
-            style="
-                padding: 4px 10px;
-                font-size: 0.95rem;
-                border-radius: 4px;
-                background: #2176ae;
-                color: #fff;
-                border: none;
-                cursor: pointer;
-                min-width: 0;
-                width: auto;
-                box-shadow: 0 1px 4px rgba(33,118,174,0.07);
-                transition: background 0.2s;
-                display: none;
-                align-items: center;
-                gap: 6px;
-                white-space: nowrap;
-            "
-            onmouseover="this.style.background='#185a8c'"
-            onmouseout="this.style.background='#2176ae'">
-            <span style="font-size:1.1em;">&#10003;</span> Kirim Pengingat yang di beri tanda centang
-        </button>
-    </form>
+        <div class="table-responsive" style="overflow-x: auto; border: 1px solid #e0e0e0; border-radius: 8px;">
+            <table class="styled-table" style="width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 0;">
+                <thead>
+                    <tr style="background: #003366;">
+                        <th style="padding: 16px; text-align: left; color: white; font-weight: 500; border-bottom: 2px solid #002244;">ID</th>
+                        <th style="padding: 16px; text-align: left; color: white; font-weight: 500; border-bottom: 2px solid #002244;">Nama Pegawai</th>
+                        <th style="padding: 16px; text-align: left; color: white; font-weight: 500; border-bottom: 2px solid #002244;">Ruangan</th>
+                        <th style="padding: 16px; text-align: left; color: white; font-weight: 500; border-bottom: 2px solid #002244;">Tanggal</th>
+                        <th style="padding: 16px; text-align: left; color: white; font-weight: 500; border-bottom: 2px solid #002244;">Waktu Mulai</th>
+                        <th style="padding: 16px; text-align: left; color: white; font-weight: 500; border-bottom: 2px solid #002244;">Waktu Selesai</th>
+                        <th style="padding: 16px; text-align: left; color: white; font-weight: 500; border-bottom: 2px solid #002244;">Kegiatan</th>
+                        <th style="padding: 16px; text-align: left; color: white; font-weight: 500; border-bottom: 2px solid #002244;">Lampiran</th>
+                        <th style="padding: 16px; text-align: left; color: white; font-weight: 500; border-bottom: 2px solid #002244;">Status</th>
+                        <th style="padding: 16px; text-align: left; color: white; font-weight: 500; border-bottom: 2px solid #002244;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in reservasi %}
+                    <tr style="transition: all 0.3s ease; border-bottom: 1px solid #e0e0e0;">
+                        <td style="padding: 16px; border-right: 1px solid #e0e0e0;">{{ r.id }}</td>
+                        <td style="padding: 16px; border-right: 1px solid #e0e0e0;">{{ r.nama }}</td>
+                        <td style="padding: 16px; border-right: 1px solid #e0e0e0;">{{ r.nama_ruangan }}</td>
+                        <td style="padding: 16px; border-right: 1px solid #e0e0e0;">{{ r.tanggal }}</td>
+                        <td style="padding: 16px; border-right: 1px solid #e0e0e0;">{{ r.waktu_mulai }}</td>
+                        <td style="padding: 16px; border-right: 1px solid #e0e0e0;">{{ r.waktu_selesai }}</td>
+                        <td style="padding: 16px; border-right: 1px solid #e0e0e0;">{{ r.kegiatan }}</td>
+                        <td style="padding: 16px; border-right: 1px solid #e0e0e0;">
+                            {% if r.lampiran %}
+                            <a href="{{ url_for('static', filename='uploads/' + r.lampiran) }}" 
+                               target="_blank"
+                               style="color: #003366; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                                <i class="fas fa-file-alt"></i> Lihat
+                            </a>
+                            {% else %}
+                            <span style="color: #999;">-</span>
+                            {% endif %}
+                        </td>
+                        <td style="padding: 16px; border-right: 1px solid #e0e0e0;">
+                            <span class="status {{ r.status|lower }}" style="
+                                padding: 6px 12px;
+                                border-radius: 20px;
+                                font-size: 0.9rem;
+                                font-weight: 500;
+                                {% if r.status == 'Menunggu' %}
+                                    background: #fff3cd;
+                                    color: #856404;
+                                {% elif r.status == 'Disetujui' %}
+                                    background: #d4edda;
+                                    color: #155724;
+                                {% else %}
+                                    background: #f8d7da;
+                                    color: #721c24;
+                                {% endif %}
+                            ">{{ r.status }}</span>
+                        </td>
+                        <td style="padding: 16px;">
+                            <div class="dropdown" style="position: relative;">
+                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" 
+                                    data-bs-toggle="dropdown" 
+                                    data-bs-auto-close="true"
+                                    aria-expanded="false"
+                                    style="
+                                        padding: 6px 12px;
+                                        border-radius: 6px;
+                                        border: 1px solid #003366;
+                                        background: white;
+                                        color: #003366;
+                                        cursor: pointer;
+                                        transition: all 0.3s ease;
+                                    ">
+                                    Pilih Aksi
+                                </button>
+                                <ul class="dropdown-menu" style="
+                                    position: absolute;
+                                    z-index: 9999;
+                                    border-radius: 8px;
+                                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                                    border: 1px solid #e0e0e0;
+                                    padding: 8px;
+                                    min-width: 160px;
+                                    margin-top: 8px;
+                                    background: white;
+                                ">
+                                    {% if r.status == 'Menunggu' %}
+                                    <li style="position: relative; z-index: 9999; margin-bottom: 4px;">
+                                        <form action="{{ url_for('setujui_reservasi', id=r.id) }}" method="post" style="display:inline;">
+                                            <button type="submit" class="dropdown-item text-success" style="
+                                                padding: 8px 16px;
+                                                border: none;
+                                                background: none;
+                                                width: 100%;
+                                                text-align: left;
+                                                cursor: pointer;
+                                                transition: all 0.3s ease;
+                                                border-radius: 4px;
+                                                position: relative;
+                                                z-index: 9999;
+                                            ">Setujui</button>
+                                        </form>
+                                    </li>
+                                    <li style="position: relative; z-index: 9999; margin-bottom: 4px;">
+                                        <form action="{{ url_for('tolak_reservasi', id=r.id) }}" method="post" style="display:inline;">
+                                            <button type="submit" class="dropdown-item text-danger" style="
+                                                padding: 8px 16px;
+                                                border: none;
+                                                background: none;
+                                                width: 100%;
+                                                text-align: left;
+                                                cursor: pointer;
+                                                transition: all 0.3s ease;
+                                                border-radius: 4px;
+                                                position: relative;
+                                                z-index: 9999;
+                                            ">Tolak</button>
+                                        </form>
+                                    </li>
+                                    {% endif %}
+                                    <li style="position: relative; z-index: 9999;">
+                                        <form action="{{ url_for('hapus_reservasi', id=r.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus reservasi ini?')">
+                                            <button type="submit" class="dropdown-item text-warning" style="
+                                                padding: 8px 16px;
+                                                border: none;
+                                                background: none;
+                                                width: 100%;
+                                                text-align: left;
+                                                cursor: pointer;
+                                                transition: all 0.3s ease;
+                                                border-radius: 4px;
+                                                position: relative;
+                                                z-index: 9999;
+                                            ">Hapus</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
+
+<style>
+/* Hover effect for table rows */
+.styled-table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Style for dropdown items */
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* Style for inputs and selects on focus */
+input:focus, select:focus {
+    border-color: #003366 !important;
+    box-shadow: 0 0 0 2px rgba(0,51,102,0.1);
+}
+
+/* Custom scrollbar */
+.table-responsive::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #003366;
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #002244;
+}
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
@@ -178,19 +254,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const ruanganFilter = document.getElementById('ruanganFilter');
     const table = document.querySelector('.styled-table tbody');
 
-    function filterTable() {
+    function searchTable() {
         const search = searchInput.value.toLowerCase();
+        
+        for (const row of table.rows) {
+            const rowText = row.innerText.toLowerCase();
+            row.style.display = search === '' || rowText.includes(search) ? '' : 'none';
+        }
+    }
+
+    function filterTable() {
         const status = statusFilter.value;
         const ruangan = ruanganFilter.value;
 
         for (const row of table.rows) {
             const cells = row.getElementsByTagName('td');
-            const rowText = row.innerText.toLowerCase();
-            const statusText = cells[9]?.innerText.trim();
-            const ruanganText = cells[3]?.innerText.trim();
+            const statusText = cells[8]?.innerText.trim();
+            const ruanganText = cells[2]?.innerText.trim();
 
             let show = true;
-            if (search && !rowText.includes(search)) show = false;
             if (status && statusText !== status) show = false;
             if (ruangan && ruanganText !== ruangan) show = false;
 
@@ -198,45 +280,71 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    searchInput.addEventListener('input', filterTable);
-    statusFilter.addEventListener('change', filterTable);
-    ruanganFilter.addEventListener('change', filterTable);
+    // Apply both search and filter when either changes
+    function applyFilters() {
+        const search = searchInput.value.toLowerCase();
+        const status = statusFilter.value;
+        const ruangan = ruanganFilter.value;
 
-    // Script untuk show/hide tombol pengingat terpilih
-    const btnPengingat = document.getElementById('btn-pengingat-terpilih');
-    const checkboxes = document.querySelectorAll('input[name="ids"]');
-    const checkAll = document.getElementById('checkAll');
+        for (const row of table.rows) {
+            const cells = row.getElementsByTagName('td');
+            const rowText = row.innerText.toLowerCase();
+            const statusText = cells[8]?.innerText.trim();
+            const ruanganText = cells[2]?.innerText.trim();
 
-    function updateButtonVisibility() {
-        let checked = false;
-        for (const cb of checkboxes) {
-            if (cb.checked) {
-                checked = true;
-                break;
-            }
+            let show = true;
+            
+            // Apply search filter
+            if (search && !rowText.includes(search)) show = false;
+            
+            // Apply status filter
+            if (status && statusText !== status) show = false;
+            
+            // Apply ruangan filter
+            if (ruangan && ruanganText !== ruangan) show = false;
+
+            row.style.display = show ? '' : 'none';
         }
-        btnPengingat.style.display = checked ? 'inline-flex' : 'none';
     }
 
-    checkboxes.forEach(cb => cb.addEventListener('change', updateButtonVisibility));
-    if (checkAll) checkAll.addEventListener('change', updateButtonVisibility);
-});
+    // Event listeners
+    searchInput.addEventListener('input', applyFilters);
+    statusFilter.addEventListener('change', applyFilters);
+    ruanganFilter.addEventListener('change', applyFilters);
 
-document.getElementById('checkAll').onclick = function() {
-    var checkboxes = document.querySelectorAll('input[name="ids"]');
-    for (var checkbox of checkboxes) {
-        checkbox.checked = this.checked;
-    }
+    // Close other dropdowns when one is opened
+    const dropdownButtons = document.querySelectorAll('.dropdown-toggle');
+    dropdownButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const currentDropdown = this.closest('.dropdown');
+            
+            // Close all other dropdowns
+            dropdownButtons.forEach(otherButton => {
+                if (otherButton !== this) {
+                    const otherDropdown = otherButton.closest('.dropdown');
+                    if (otherDropdown !== currentDropdown) {
+                        const dropdownMenu = otherDropdown.querySelector('.dropdown-menu');
+                        if (dropdownMenu.classList.contains('show')) {
+                            otherButton.click();
+                        }
+                    }
+                }
+            });
+        });
+    });
 
-    // Tampilkan atau sembunyikan tombol kirim pengingat terpilih
-    document.getElementById('btn-pengingat-terpilih').style.display = this.checked ? 'inline-flex' : 'none';
-};
-
-// Tampilkan atau sembunyikan tombol kirim pengingat terpilih saat checkbox individu diklik
-document.querySelectorAll('input[name="ids"]').forEach(function(checkbox) {
-    checkbox.addEventListener('change', function() {
-        const anyChecked = Array.from(document.querySelectorAll('input[name="ids"]')).some(chk => chk.checked);
-        document.getElementById('btn-pengingat-terpilih').style.display = anyChecked ? 'inline-flex' : 'none';
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown')) {
+            const openDropdowns = document.querySelectorAll('.dropdown-menu.show');
+            openDropdowns.forEach(dropdown => {
+                const button = dropdown.previousElementSibling;
+                if (button) {
+                    button.click();
+                }
+            });
+        }
     });
 });
 </script>

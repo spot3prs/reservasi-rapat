@@ -1,76 +1,122 @@
-{% extends 'layout.html' %}
+{% extends "layout.html" %}
+
+{% block title %}Edit Pegawai | Komnas HAM RI{% endblock %}
+
 {% block content %}
-<div class="dashboard-container">
-    <!-- Pesan flash -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }}" style="margin-bottom: 18px;">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+<style>
+    .card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 24px;
+    }
+    .card-header {
+        background: #003366;
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px 8px 0 0;
+    }
+    .card-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 500;
+    }
+    .card-body {
+        padding: 24px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #495057;
+        font-weight: 500;
+    }
+    .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: border-color 0.15s ease-in-out;
+    }
+    .form-group input:focus {
+        border-color: #003366;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 51, 102, 0.25);
+    }
+    .form-group input[readonly] {
+        background-color: #e9ecef;
+        cursor: not-allowed;
+    }
+    .form-actions {
+        margin-top: 24px;
+        display: flex;
+        gap: 12px;
+    }
+    .btn {
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s ease-in-out;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    .btn-primary {
+        background: #003366;
+        border: none;
+        color: white;
+    }
+    .btn-primary:hover {
+        background: #002244;
+    }
+    .btn-secondary {
+        background: #6c757d;
+        border: none;
+        color: white;
+        text-decoration: none;
+    }
+    .btn-secondary:hover {
+        background: #5a6268;
+        color: white;
+    }
+</style>
 
-    <h2 class="dashboard-title mb-1" style="font-size: 1.6rem; font-weight: 600; text-align: left; margin: 0;">
-        Edit Data Pegawai
-    </h2>
-
-    <div class="table-section" style="margin-top: 20px;">
-        <div class="card shadow" style="border: none; border-radius: 8px;">
-            <div class="card-body" style="padding: 24px;">
-                <form method="POST" class="needs-validation" novalidate>
-                    <div class="mb-3">
-                        <label for="nama" class="form-label" style="font-weight: 500; color: #333;">Nama Lengkap</label>
-                        <input type="text" class="form-control" id="nama" name="nama" value="{{ user.nama }}" required
-                            style="padding: 8px 12px; border-radius: 4px; border: 1px solid #ccc;">
-                        <div class="invalid-feedback">
-                            Mohon isi nama lengkap
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="password" class="form-label" style="font-weight: 500; color: #333;">Password Baru</label>
-                        <input type="password" class="form-control" id="password" name="password" 
-                            placeholder="Kosongkan jika tidak ingin mengubah password"
-                            style="padding: 8px 12px; border-radius: 4px; border: 1px solid #ccc;">
-                        <div class="form-text text-muted" style="font-size: 0.875rem; margin-top: 4px;">
-                            Biarkan kosong jika tidak ingin mengubah password
-                        </div>
-                    </div>
-
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary me-md-2" 
-                            style="padding: 8px 16px; border-radius: 4px; background: #6c757d; color: #fff; border: none; cursor: pointer;">
-                            Kembali
-                        </a>
-                        <button type="submit" class="btn btn-primary"
-                            style="padding: 8px 16px; border-radius: 4px; background: #2176ae; color: #fff; border: none; cursor: pointer; min-width: 0; box-shadow: 0 1px 4px rgba(33,118,174,0.07); transition: background 0.2s;"
-                            onmouseover="this.style.background='#185a8c'"
-                            onmouseout="this.style.background='#2176ae'">
-                            <i class="fas fa-save me-1"></i> Simpan Perubahan
-                        </button>
-                    </div>
-                </form>
+<div class="card">
+    <div class="card-header">
+        <h2>Edit Data Pegawai</h2>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            <div class="form-group">
+                <label for="nip">NIP</label>
+                <input type="text" name="nip" id="nip" value="{{ user.nip }}" readonly>
             </div>
-        </div>
+
+            <div class="form-group">
+                <label for="nama">Nama</label>
+                <input type="text" name="nama" id="nama" value="{{ user.nama }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password Baru (kosongkan jika tidak ingin mengubah)</label>
+                <input type="password" name="password" id="password">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Simpan Perubahan
+                </button>
+                <a href="{{ url_for('kelola_pegawai') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Kembali
+                </a>
+            </div>
+        </form>
     </div>
 </div>
-
-<script>
-// Form validation
-(function () {
-    'use strict'
-    var forms = document.querySelectorAll('.needs-validation')
-    Array.prototype.slice.call(forms).forEach(function (form) {
-        form.addEventListener('submit', function (event) {
-            if (!form.checkValidity()) {
-                event.preventDefault()
-                event.stopPropagation()
-            }
-            form.classList.add('was-validated')
-        }, false)
-    })
-})()
-</script>
 {% endblock %}

@@ -1,88 +1,185 @@
 {% extends 'layout.html' %}
+
+{% block title %}Ajukan Reservasi | Komnas HAM RI{% endblock %}
+
+{% block styles %}
+<style>
+    .main-content {
+        padding: 40px 20px;
+        background: #f8f9fa;
+        min-height: calc(100vh - 140px);
+    }
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+    .card-header {
+        background: #2176ae;
+        color: white;
+        padding: 24px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .card-header h2 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+    .card-body {
+        padding: 32px;
+    }
+    .form-group {
+        margin-bottom: 24px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #2c3e50;
+    }
+    .form-group input[type="date"],
+    .form-group input[type="time"],
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    .form-group input[type="date"]:focus,
+    .form-group input[type="time"]:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        border-color: #2176ae;
+        box-shadow: 0 0 0 3px rgba(33,118,174,0.1);
+        outline: none;
+    }
+    .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+    .form-group input[type="file"] {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        border: 2px dashed #e0e0e0;
+        border-radius: 8px;
+        background: #f8f9fa;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .form-group input[type="file"]:hover {
+        border-color: #2176ae;
+        background: #f0f7ff;
+    }
+    .form-text {
+        display: block;
+        margin-top: 8px;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    .form-actions {
+        display: flex;
+        gap: 16px;
+        margin-top: 32px;
+    }
+    .btn {
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    .btn-primary {
+        background: #2176ae;
+        color: white;
+        border: none;
+    }
+    .btn-primary:hover {
+        background: #185a8c;
+        transform: translateY(-1px);
+    }
+    .btn-secondary {
+        background: #f8f9fa;
+        color: #2c3e50;
+        border: 1px solid #e0e0e0;
+    }
+    .btn-secondary:hover {
+        background: #e9ecef;
+        transform: translateY(-1px);
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="form-container">
-    <div class="form-header">
-        <h2><i class="fas fa-calendar-check"></i> Form Pengajuan Reservasi Rapat</h2>
-        <p class="form-subtitle">Komisi Nasional Hak Asasi Manusia Republik Indonesia</p>
-    </div>
-
-    <form action="{{ url_for('ajukan_reservasi') }}" method="POST" enctype="multipart/form-data" class="reservation-form">
-        <div class="form-group">
-            <label><i class="fas fa-door-open"></i> Ruang Rapat</label>
-            <select name="ruangan" required>
-                <option value="">-- Pilih Ruangan --</option>
-                <option value="Ruang Rapat Utama">Ruang Rapat Utama (Lantai 2)</option>
-                <option value="Ruang Rapat Pleno 1">Ruang Rapat Pleno 1 (Lantai 3)</option>
-                <option value="Ruang Rapat Pleno 2">Ruang Rapat Pleno 2 (Lantai 3)</option>
-                <option value="Ruang Rapat Kelompok">Ruang Rapat Kelompok (Lantai 3)</option>
-            </select>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group">
-                <label><i class="fas fa-calendar-alt"></i> Tanggal Rapat</label>
-                <input type="date" name="tanggal" required>
+<div class="main-content">
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-calendar-plus"></i> Ajukan Reservasi Ruangan</h2>
             </div>
-            <div class="form-group">
-                <label><i class="fas fa-clock"></i> Waktu Mulai</label>
-                <input type="time" name="waktu_mulai" required>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="ruangan"><i class="fas fa-door-open"></i> Ruangan</label>
+                        <select name="ruangan" id="ruangan" required>
+                            <option value="">Pilih Ruangan</option>
+                            {% for ruangan in ruangan_list %}
+                            <option value="{{ ruangan.nama }}">{{ ruangan.nama }} ({{ ruangan.lokasi }}, Kapasitas: {{ ruangan.kapasitas }} orang)</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tanggal"><i class="fas fa-calendar"></i> Tanggal</label>
+                        <input type="date" name="tanggal" id="tanggal" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="waktu_mulai"><i class="fas fa-clock"></i> Waktu Mulai</label>
+                        <input type="time" name="waktu_mulai" id="waktu_mulai" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="waktu_selesai"><i class="fas fa-clock"></i> Waktu Selesai</label>
+                        <input type="time" name="waktu_selesai" id="waktu_selesai" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="keperluan"><i class="fas fa-clipboard-list"></i> Keperluan</label>
+                        <textarea name="keperluan" id="keperluan" rows="4" required placeholder="Jelaskan keperluan reservasi ruangan..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lampiran"><i class="fas fa-file-pdf"></i> Lampiran (PDF)</label>
+                        <input type="file" name="lampiran" id="lampiran" accept=".pdf">
+                        <small class="form-text">Upload surat undangan atau dokumen pendukung dalam format PDF (opsional)</small>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Ajukan Reservasi
+                        </button>
+                        <a href="{{ url_for('dashboard_pegawai') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Kembali
+                        </a>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label><i class="fas fa-clock"></i> Waktu Selesai</label>
-                <input type="time" name="waktu_selesai" required>
-            </div>
         </div>
-
-        <div class="form-group">
-            <label><i class="fas fa-file-alt"></i> Keperluan Rapat</label>
-            <textarea name="keperluan" rows="4" required placeholder="Jelaskan tujuan dan agenda rapat..."></textarea>
-        </div>
-
-        <div class="form-group">
-            <label><i class="fas fa-paperclip"></i> Lampiran (Opsional)</label>
-            <input type="file" 
-                   name="lampiran" 
-                   id="lampiran" 
-                   accept=".pdf,.doc,.docx,.jpg,.png"
-                   class="form-control">
-            <small class="form-text text-muted">
-                Format yang diperbolehkan: PDF, DOC, DOCX, JPG, PNG (Maks. 5MB)
-            </small>
-        </div>
-
-        <div class="form-footer">
-            <button type="submit" class="submit-btn">
-                <i class="fas fa-paper-plane"></i> Ajukan Reservasi
-            </button>
-        </div>
-    </form>
-
-    <div class="form-note">
-        <p><i class="fas fa-info-circle"></i> Catatan:</p>
-        <ul>
-            <li>Reservasi harus diajukan minimal 1x24 jam sebelum waktu rapat</li>
-            <li>Pastikan ruangan yang dipilih tersedia pada waktu yang diinginkan</li>
-            <li>Status reservasi akan diinformasikan melalui sistem</li>
-        </ul>
     </div>
 </div>
-
-<!-- Flash message pop-up -->
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% for category, message in messages %}
-        <div class="popup popup-{{ category }}">
-            <div class="popup-content">
-                {% if category == 'success' %}
-                    <span class="popup-icon">&#10004;</span> <!-- Tanda centang hijau -->
-                {% elif category == 'danger' %}
-                    <span class="popup-icon">&#10006;</span> <!-- Tanda silang merah -->
-                {% endif %}
-                <p class="popup-message">{{ message }}</p>
-            </div>
-        </div>
-    {% endfor %}
-{% endwith %}
-
-<!-- Include JavaScript untuk flash pop-up -->
-<script src="{{ url_for('static', filename='js/popup.js') }}"></script>
 {% endblock %}

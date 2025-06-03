@@ -29,19 +29,26 @@
     <nav class="sidebar-menu">
         <ul>
             {% if session.get('role') == 'admin' %}
-                <li><a href="{{ url_for('dashboard_admin') }}">Dashboard</a></li>
-                <li><a href="{{ url_for('kelola_reservasi') }}">Kelola Reservasi</a></li>
-                <li><a href="{{ url_for('kelola_pegawai') }}">Kelola Pegawai</a></li>
-                <li><a href="{{ url_for('verifikasi_pengajuan') }}">Verifikasi Pengajuan</a></li>
-                <li><a href="{{ url_for('kalender') }}">Kalender Jadwal</a></li>
+                <li><a href="{{ url_for('dashboard_admin') }}"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                <li><a href="{{ url_for('kelola_reservasi') }}"><i class="fas fa-calendar-check me-2"></i>Kelola Reservasi</a></li>
+                <li><a href="{{ url_for('kelola_pegawai') }}"><i class="fas fa-users me-2"></i>Kelola Pegawai</a></li>
+                <li><a href="{{ url_for('verifikasi_pengajuan') }}"><i class="fas fa-clipboard-check me-2"></i>Verifikasi Pengajuan</a></li>
+                <li><a href="{{ url_for('kalender') }}"><i class="fas fa-calendar-alt me-2"></i>Kalender Jadwal</a></li>
             {% else %}
-                <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
-                <li><a href="{{ url_for('ajukan_reservasi') }}"> Ajukan Reservasi</a></li>
-                <li><a href="{{ url_for('reservasi_saya') }}">Reservasi Saya</a></li>
-                <li><a href="{{ url_for('jadwal') }}">Jadwal</a></li>
-                <li><a href="{{ url_for('kalender') }}">Kalender Jadwal</a></li>
+                <li><a href="{{ url_for('dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                <li><a href="{{ url_for('ajukan_reservasi') }}"><i class="fas fa-calendar-plus me-2"></i>Ajukan Reservasi</a></li>
+                <li><a href="{{ url_for('reservasi_saya') }}"><i class="fas fa-list-alt me-2"></i>Reservasi Saya</a></li>
+                <li><a href="{{ url_for('jadwal') }}"><i class="fas fa-clock me-2"></i>Jadwal</a></li>
+                <li><a href="{{ url_for('kalender') }}"><i class="fas fa-calendar-alt me-2"></i>Kalender Jadwal</a></li>
             {% endif %}
-            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            <li><a href="{{ url_for('profile') }}" class="nav-link">
+                <i class="fas fa-user-circle me-2"></i>
+                <span>Profil</span>
+            </a></li>
+            <li><a href="{{ url_for('logout') }}" class="nav-link">
+                <i class="fas fa-sign-out-alt me-2"></i>
+                <span>Logout</span>
+            </a></li>
         </ul>
     </nav>
 

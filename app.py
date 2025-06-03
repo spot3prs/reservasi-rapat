@@ -16,6 +16,7 @@ from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 import re
+import random
 
 app = Flask(__name__)
 app.secret_key = 'secret123'
@@ -47,6 +48,40 @@ def admin_required(f):
             return redirect(url_for('dashboard_pegawai'))
         return f(*args, **kwargs)
     return decorated_function
+
+def create_tables():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Create ruangan table if not exists
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS ruangan (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            nama VARCHAR(100) NOT NULL,
+            lokasi VARCHAR(100) NOT NULL,
+            kapasitas INT NOT NULL
+        )
+    """)
+    
+    # Insert default rooms if table is empty
+    cursor.execute("SELECT COUNT(*) FROM ruangan")
+    if cursor.fetchone()[0] == 0:
+        default_rooms = [
+            ('Ruang Rapat Utama', 'Lantai 2', 30),
+            ('Ruang Rapat Pleno 1', 'Lantai 3', 20),
+            ('Ruang Rapat Pleno 2', 'Lantai 3', 30),
+            ('Ruang Rapat Kelompok', 'Lantai 3', 15)
+        ]
+        cursor.executemany(
+            "INSERT INTO ruangan (nama, lokasi, kapasitas) VALUES (%s, %s, %s)",
+            default_rooms
+        )
+    
+    conn.commit()
+    conn.close()
+
+# Call create_tables when app starts
+create_tables()
 
 @app.route('/')
 def index():
@@ -136,6 +171,13 @@ def dashboard_pegawai():
 def ajukan_reservasi():
     if 'nip' not in session:
         return redirect(url_for('login'))
+
+    # Ambil data ruangan dari database
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM ruangan ORDER BY nama")
+    ruangan_list = cursor.fetchall()
+    conn.close()
 
     if request.method == 'POST':
         ruangan = request.form['ruangan']
@@ -250,7 +292,7 @@ def ajukan_reservasi():
             flash("Terjadi kesalahan saat mengajukan reservasi.", "danger")
             return redirect(url_for('ajukan_reservasi'))
 
-    return render_template('ajukan_reservasi.html')
+    return render_template('ajukan_reservasi.html', ruangan_list=ruangan_list)
 
 @app.route('/reservasi-saya')
 def reservasi_saya():
@@ -576,49 +618,6 @@ def notifikasi_otomatis():
     jumlah = kirim_notifikasi_otomatis()
     flash(f'Notifikasi otomatis dikirim ke {jumlah} pegawai.', 'success')
     return redirect(url_for('dashboard_admin'))
-
-@app.route('/kirim-pengingat-sekarang', methods=['POST'])
-@admin_required
-def kirim_pengingat_sekarang():
-    jumlah = kirim_notifikasi_otomatis()
-    flash(f'Notifikasi pengingat dikirim ke {jumlah} pegawai.', 'success')
-    return redirect(url_for('kelola_reservasi'))
-
-@app.route('/kirim-pengingat-terpilih', methods=['POST'])
-@admin_required
-def kirim_pengingat_terpilih():
-    ids = request.form.getlist('ids')
-    if not ids:
-        flash('Tidak ada reservasi yang dipilih.', 'danger')
-        return redirect(url_for('kelola_reservasi'))
-
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-    format_strings = ','.join(['%s'] * len(ids))
-    cursor.execute(f"""
-        SELECT r.*, p.nama, p.no_wa
-        FROM reservasi r
-        JOIN pegawai p ON r.nip = p.nip
-        WHERE r.id IN ({format_strings}) AND r.status = 'Disetujui'
-    """, tuple(ids))
-    data = cursor.fetchall()
-    cursor.close()
-    conn.close()
-
-    jumlah_dikirim = 0
-    for row in data:
-        pesan = (
-            f"Hai, {row['nama']}!\n\n"
-            f"Ini adalah pengingat bahwa Anda memiliki jadwal di ruang *{row['ruangan']}* "
-            f"pada {row['tanggal']} pukul {row['waktu_mulai']} - {row['waktu_selesai']}.\n\n"
-            f"> _Dikirim oleh adm. KOMNAS HAM RI_"
-        )
-        if row['no_wa']:
-            kirim_wa(row['no_wa'], pesan)
-            jumlah_dikirim += 1
-
-    flash(f'Pengingat dikirim ke {jumlah_dikirim} pegawai.', 'success')
-    return redirect(url_for('kelola_reservasi'))
 
 @app.route('/export_excel')
 @admin_required
@@ -1072,6 +1071,93 @@ def view_pdf(filename):
         print(f"[ERROR VIEW PDF]: {str(e)}")
         flash("Gagal mengunduh file PDF.", "danger")
         return redirect(url_for('verifikasi_pengajuan'))
+
+@app.route('/lupa-password', methods=['GET', 'POST'])
+def lupa_password():
+    if request.method == 'POST':
+        nip = request.form['nip']
+        no_wa = request.form['no_wa']
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Cek apakah NIP dan nomor WA cocok
+        cursor.execute("SELECT * FROM pegawai WHERE nip = %s AND no_wa = %s", (nip, no_wa))
+        user = cursor.fetchone()
+        
+        if user:
+            # Generate password baru (6 digit angka)
+            new_password = ''.join([str(random.randint(0, 9)) for _ in range(6)])
+            
+            # Update password di database
+            cursor.execute("UPDATE pegawai SET password = %s WHERE nip = %s", (new_password, nip))
+            conn.commit()
+            
+            # Kirim password baru via WhatsApp
+            pesan = (
+                f"Hai, {user['nama']}!\n\n"
+                f"Password baru Anda adalah: *{new_password}*\n\n"
+                f"Silakan login dengan password baru ini.\n"
+                f"Mohon segera ubah password Anda setelah login."
+            )
+            kirim_wa(no_wa, pesan)
+            
+            flash("Password baru telah dikirim ke WhatsApp Anda.", "success")
+        else:
+            flash("NIP atau nomor WhatsApp tidak ditemukan.", "danger")
+        
+        conn.close()
+        return redirect(url_for('login'))
+        
+    return render_template('lupa_password.html')
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'nip' not in session:
+            flash('Silakan login terlebih dahulu.', 'warning')
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    if request.method == 'POST':
+        current_password = request.form.get('current_password')
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM pegawai WHERE nip = %s", (session['nip'],))
+        user = cursor.fetchone()
+
+        # Verifikasi password saat ini
+        if user['password'] != current_password:
+            flash('Password saat ini tidak sesuai!', 'error')
+            return redirect(url_for('profile'))
+
+        # Verifikasi password baru
+        if new_password != confirm_password:
+            flash('Password baru dan konfirmasi password tidak sesuai!', 'error')
+            return redirect(url_for('profile'))
+
+        # Update password
+        cursor.execute("UPDATE pegawai SET password = %s WHERE nip = %s", (new_password, session['nip']))
+        conn.commit()
+        conn.close()
+
+        flash('Password berhasil diubah!', 'success')
+        return redirect(url_for('profile'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM pegawai WHERE nip = %s", (session['nip'],))
+    user = cursor.fetchone()
+    conn.close()
+
+    return render_template('profile.html', user=user)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

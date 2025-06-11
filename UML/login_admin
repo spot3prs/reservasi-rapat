@@ -1,0 +1,23 @@
+@startuml
+actor Admin
+participant "Halaman Login" as LoginPage
+participant Sistem
+database Database
+
+Admin -> LoginPage : Buka halaman login
+Admin -> LoginPage : Masukkan NIP dan Password
+Admin -> LoginPage : Klik tombol "Login"
+
+LoginPage -> Sistem : Kirim data login
+Sistem -> Database : Ambil data admin berdasarkan NIP
+Database --> Sistem : Kirim data admin
+
+Sistem -> Sistem : Validasi password
+alt Jika valid
+    Sistem -> LoginPage : Redirect ke Dashboard Admin
+    LoginPage --> Admin : Akses halaman Dashboard
+else Jika tidak valid
+    Sistem -> LoginPage : Tampilkan pesan error
+    LoginPage --> Admin : Menampilkan "Login gagal"
+end
+@enduml

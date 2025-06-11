@@ -1,0 +1,24 @@
+@startuml
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Admin|
+start
+:Buka halaman login;
+:Masukkan NIP dan password;
+:Klik tombol Login;
+
+|Sistem|
+:Validasi data login;
+
+if (Valid?) then (Ya)
+  :Arahkan ke Dashboard Admin;
+  stop
+else (Tidak)
+  :Tampilkan pesan error;
+  |Admin|
+  :Ulangi input;
+  stop
+endif
+@enduml

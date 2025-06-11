@@ -1,0 +1,14 @@
+@startuml
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Admin|
+start
+:Klik menu Logout;
+
+|Sistem|
+:Hapus sesi login admin;
+:Arahkan ke halaman login;
+stop
+@enduml

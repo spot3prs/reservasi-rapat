@@ -1,0 +1,74 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+' === Class: Pegawai ===
+class Pegawai {
+  +nip: String
+  +nama: String
+  +no_wa: String
+  +password: String
+  +login()
+  +ajukanAkun()
+  +ajukanReservasi()
+  +ubahPassword()
+}
+
+' === Class: Admin ===
+class Admin {
+  +nip: String
+  +password: String
+  +login()
+  +verifikasiAkun()
+  +kelolaReservasi()
+  +kelolaPegawai()
+  +ubahPassword()
+}
+
+' === Class: Reservasi ===
+class Reservasi {
+  +id: int
+  +tanggal: Date
+  +waktu_mulai: Time
+  +waktu_selesai: Time
+  +keperluan: String
+  +lampiran: File
+  +status: String
+  +ajukan()
+  +verifikasi()
+}
+
+' === Class: Ruangan ===
+class Ruangan {
+  +id: int
+  +nama: String
+  +lokasi: String
+  +kapasitas: int
+}
+
+' === Class: PengajuanAkun ===
+class PengajuanAkun {
+  +id: int
+  +nip: String
+  +nama: String
+  +no_wa: String
+  +surat: File
+  +status: String
+  +ajukan()
+}
+
+' === Class: ResetPassword ===
+class ResetPassword {
+  +id: int
+  +nip: String
+  +status: String
+  +ajukan()
+}
+
+' === Relasi ===
+Pegawai "1" --> "0..*" Reservasi : mengajukan >
+Reservasi "1" --> "1" Ruangan : untuk >
+Pegawai "1" --> "0..1" PengajuanAkun : mengirim >
+Pegawai "1" --> "0..1" ResetPassword : mengajukan >
+Admin "1" --> "0..*" Reservasi : memverifikasi >
+Admin "1" --> "0..*" PengajuanAkun : memverifikasi >
+@enduml

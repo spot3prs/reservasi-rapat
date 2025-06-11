@@ -1,0 +1,18 @@
+@startuml
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Pegawai|
+start
+:Klik "Ajukan Akun";
+:Isi NIP, Nama, No. WA;
+:Upload Surat Pengajuan PDF;
+:Klik tombol Ajukan Akun;
+
+|Sistem|
+:Validasi data;
+:Input data ke database;
+:Tampilkan notifikasi pengajuan berhasil;
+stop
+@enduml

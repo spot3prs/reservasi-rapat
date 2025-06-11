@@ -1,0 +1,17 @@
+@startuml
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Pegawai|
+start
+:Masuk ke menu Ajukan Reservasi;
+:Isi form;
+:Klik tombol Ajukan Reservasi;
+
+|Sistem|
+:Validasi data;
+:Simpan data ke database;
+:Tampilkan notifikasi pengajuan berhasil;
+stop
+@enduml

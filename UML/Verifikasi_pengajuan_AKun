@@ -1,0 +1,22 @@
+@startuml
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Admin|
+start
+:Masuk ke menu Verifikasi Pengajuan Akun;
+:Lihat daftar pengajuan akun;
+:Pilih salah satu pengajuan;
+:Tinjau data dan surat;
+:Pilih Setujui / Tolak;
+
+|Sistem|
+:Update status pengajuan di database;
+:Kirim notifikasi hasil verifikasi ke Pegawai;
+
+|Pegawai|
+:Menerima notifikasi akun disetujui / ditolak;
+
+stop
+@enduml

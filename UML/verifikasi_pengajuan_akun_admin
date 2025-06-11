@@ -1,0 +1,23 @@
+@startuml
+actor Admin
+participant "Halaman Verifikasi Akun" as VerifikasiPage
+participant Sistem
+database Database
+actor Pegawai
+
+Admin -> VerifikasiPage : Masuk ke menu Verifikasi Akun
+VerifikasiPage -> Sistem : Minta daftar pengajuan akun
+Sistem -> Database : Ambil data pengajuan akun
+Database --> Sistem : Data pengajuan
+Sistem --> VerifikasiPage : Tampilkan daftar pengajuan
+
+Admin -> VerifikasiPage : Pilih salah satu pengajuan
+Admin -> VerifikasiPage : Tinjau data & surat pengajuan
+Admin -> VerifikasiPage : Klik tombol Setujui / Tolak
+
+VerifikasiPage -> Sistem : Kirim aksi verifikasi
+Sistem -> Database : Update status pengajuan
+Database --> Sistem : Konfirmasi update
+
+Sistem -> Pegawai : Kirim notifikasi hasil pengajuan akun
+@enduml

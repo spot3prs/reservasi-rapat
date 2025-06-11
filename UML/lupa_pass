@@ -1,0 +1,17 @@
+@startuml
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Pegawai|
+start
+:Klik menu Lupa Password;
+:Isi form reset password;
+:Klik tombol Kirim Permintaan;
+
+|Sistem|
+:Validasi form;
+:Simpan permintaan ke database;
+:Tampilkan notifikasi bahwa permintaan berhasil dikirim;
+stop
+@enduml

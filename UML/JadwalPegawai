@@ -1,0 +1,14 @@
+@startuml
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Pegawai|
+start
+:Masuk ke menu Jadwal Umum;
+
+|Sistem|
+:Ambil seluruh data jadwal reservasi ruangan;
+:Tampilkan jadwal umum kepada Pegawai;
+stop
+@enduml

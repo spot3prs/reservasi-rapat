@@ -1,0 +1,18 @@
+@startuml
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Admin|
+start
+:Masuk ke menu Profil;
+:Klik tombol Ubah Password;
+:Isi password lama dan password baru;
+:Klik Simpan;
+
+|Sistem|
+:Validasi password lama;
+:Perbarui password jika valid;
+:Tampilkan notifikasi berhasil;
+stop
+@enduml

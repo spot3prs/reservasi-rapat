@@ -1,0 +1,64 @@
+@startuml
+!define table(x) class x << (T,#FFAAAA) >>
+!define primary_key(x) <b>x</b>
+!define foreign_key(x) <u>x</u>
+
+skinparam classAttributeIconSize 0
+
+' === Tabel Pegawai ===
+table(Pegawai) {
+  primary_key(id): INT
+  nip: VARCHAR
+  nama: VARCHAR
+  no_wa: VARCHAR
+  password: VARCHAR
+  role: ENUM('pegawai','admin')
+}
+
+' === Tabel Ruangan ===
+table(Ruangan) {
+  primary_key(id): INT
+  nama: VARCHAR
+  lokasi: VARCHAR
+  kapasitas: INT
+}
+
+' === Tabel Reservasi ===
+table(Reservasi) {
+  primary_key(id): INT
+  foreign_key(nip): VARCHAR
+  foreign_key(id_ruangan): INT (opsional, jika FK diubah)
+  tanggal: DATE
+  waktu_mulai: TIME
+  waktu_selesai: TIME
+  keperluan: TEXT
+  lampiran: VARCHAR
+  status: VARCHAR
+  waktu_pengajuan: DATETIME
+}
+
+' === Tabel PengajuanAkun ===
+table(PengajuanAkun) {
+  primary_key(id): INT
+  foreign_key(nip): VARCHAR
+  nama: VARCHAR
+  no_wa: VARCHAR
+  isi_surat: TEXT
+  file_surat: VARCHAR
+  status: ENUM('Menunggu','Disetujui','Ditolak')
+  tanggal_pengajuan: DATETIME
+}
+
+' === Tabel ResetPassword ===
+table(ResetPassword) {
+  primary_key(id): INT
+  foreign_key(nip): VARCHAR
+  status: ENUM('Menunggu','Diproses','Selesai')
+}
+
+' === Relasi ===
+Pegawai ||--o{ Reservasi : mengajukan >
+Pegawai ||--|| PengajuanAkun : mengirim >
+Pegawai ||--|| ResetPassword : meminta >
+Ruangan ||--o{ Reservasi : digunakan >
+@enduml

@@ -1,0 +1,21 @@
+@startuml
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Admin|
+start
+:Masuk ke menu Kelola Reservasi;
+:Lihat daftar pengajuan reservasi;
+:Pilih salah satu reservasi;
+:Pilih aksi: Setujui / Tolak;
+
+|Sistem|
+:Update status reservasi di database;
+:Kirim notifikasi hasil verifikasi ke Pegawai;
+
+|Pegawai|
+:Menerima notifikasi status reservasi;
+
+stop
+@enduml

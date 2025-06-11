@@ -1,0 +1,16 @@
+@startuml
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Admin|
+start
+:Masuk ke menu Kelola Pegawai;
+:Lihat daftar pegawai;
+:Pilih tambah / edit / hapus pegawai;
+
+|Sistem|
+:Lakukan perubahan data pegawai di database;
+:Tampilkan hasil aksi (berhasil/gagal);
+stop
+@enduml

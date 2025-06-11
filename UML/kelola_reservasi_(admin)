@@ -1,0 +1,22 @@
+@startuml
+actor Admin
+participant "Halaman Kelola Reservasi" as ReservasiPage
+participant Sistem
+database Database
+actor Pegawai
+
+Admin -> ReservasiPage : Masuk ke menu Kelola Reservasi
+ReservasiPage -> Sistem : Permintaan data reservasi
+Sistem -> Database : Ambil daftar reservasi
+Database --> Sistem : Data reservasi
+Sistem --> ReservasiPage : Tampilkan daftar reservasi
+
+Admin -> ReservasiPage : Pilih salah satu reservasi
+Admin -> ReservasiPage : Klik tombol Setujui / Tolak
+
+ReservasiPage -> Sistem : Kirim aksi verifikasi
+Sistem -> Database : Update status reservasi
+Database --> Sistem : Konfirmasi berhasil
+
+Sistem -> Pegawai : Kirim notifikasi status reservasi
+@enduml

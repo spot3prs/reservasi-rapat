@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import Flask, render_template, request, redirect, session, url_for, flash, send_file, make_response
+from flask import Flask, render_template, request, redirect, session, url_for, flash, send_file, make_response, jsonify
 from config import get_db_connection
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import timedelta, datetime
@@ -169,6 +169,7 @@ def dashboard_pegawai():
 
 @app.route('/ajukan-reservasi', methods=['GET', 'POST'])
 def ajukan_reservasi():
+    # Cek login
     if 'nip' not in session:
         return redirect(url_for('login'))
 
@@ -180,118 +181,81 @@ def ajukan_reservasi():
     conn.close()
 
     if request.method == 'POST':
-        ruangan = request.form['ruangan']
-        tanggal = request.form['tanggal']
-        waktu_mulai = request.form['waktu_mulai']
-        waktu_selesai = request.form['waktu_selesai']
-        keperluan = request.form['keperluan']
-        nip = session['nip']
-
-        # Handle file upload
-        lampiran_file = request.files.get('lampiran')
-        lampiran_filename = None
-
-        if lampiran_file and lampiran_file.filename != '':
-            lampiran_filename = secure_filename(lampiran_file.filename)
-            lampiran_file.save(os.path.join('static/uploads', lampiran_filename))
-
         try:
-            print("[DEBUG] Mulai proses reservasi")
+            # Ambil data dari form
+            nip = session['nip']  # Ambil NIP dari session
+            ruangan = request.form['ruangan']
+            tanggal = request.form['tanggal']
+            waktu_mulai = request.form['waktu_mulai']
+            waktu_selesai = request.form['waktu_selesai']
+            keperluan = request.form['keperluan']
 
-            waktu_reservasi = datetime.strptime(f"{tanggal} {waktu_mulai}", "%Y-%m-%d %H:%M")
-            waktu_sekarang = datetime.now(pytz.timezone('Asia/Jakarta'))  # gunakan timezone Asia/Jakarta
-
-            print(f"[DEBUG] Waktu reservasi: {waktu_reservasi}, sekarang: {waktu_sekarang}")
-
-            waktu_selesai_dt = datetime.strptime(f"{tanggal} {waktu_selesai}", "%Y-%m-%d %H:%M")
-
-            # Validasi waktu sudah lewat
-            # if waktu_reservasi < waktu_sekarang:
-            #     flash("Tidak bisa melakukan reservasi di waktu yang telah lewat.", "danger")
-            #     return redirect(url_for('ajukan_reservasi'))
-
-            # Validasi jam kerja
-            # jam_kerja_mulai = datetime.strptime("08:00", "%H:%M").time()
-            # jam_kerja_selesai = datetime.strptime("17:00", "%H:%M").time()
-            # if not (jam_kerja_mulai <= waktu_reservasi.time() <= jam_kerja_selesai) or not (jam_kerja_mulai <= waktu_selesai_dt.time() <= jam_kerja_selesai):
-            #     flash("Waktu reservasi harus berada dalam jam kerja (08:00 - 17:00).", "danger")
-            #     return redirect(url_for('ajukan_reservasi'))
-
-            if waktu_selesai_dt <= waktu_reservasi:
-                flash("Waktu selesai harus lebih besar dari waktu mulai.", "danger")
+            # Validasi input
+            if not all([nip, ruangan, tanggal, waktu_mulai, waktu_selesai, keperluan]):
+                flash("Semua field harus diisi!", "danger")
                 return redirect(url_for('ajukan_reservasi'))
 
+            # Cek ketersediaan ruangan
             conn = get_db_connection()
             cursor = conn.cursor(dictionary=True)
-
-            query = '''
-            SELECT * FROM reservasi 
-            WHERE ruangan = %s 
-            AND tanggal = %s 
-            AND status != 'Ditolak'
-            AND (
-                (waktu_mulai <= %s AND waktu_selesai > %s) OR
-                (waktu_mulai < %s AND waktu_selesai >= %s) OR
-                (waktu_mulai >= %s AND waktu_selesai <= %s)
-            )
-            '''
-            print("[DEBUG] Cek bentrok...")
-            cursor.execute(query, (
-                ruangan, tanggal,
-                waktu_mulai, waktu_mulai,
-                waktu_selesai, waktu_selesai,
-                waktu_mulai, waktu_selesai
-            ))
-            if cursor.fetchone():
-                flash("Ruangan sudah terisi pada waktu tersebut!", "danger")
-                return redirect(url_for('ajukan_reservasi'))
-
-            # Modified INSERT query
-            insert_query = '''
-            INSERT INTO reservasi (
-                nip, ruangan, tanggal, waktu_mulai, waktu_selesai, keperluan, 
-                status, waktu_pengajuan, lampiran
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-            '''
-            waktu_pengajuan = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            cursor.execute("""
+                SELECT * FROM reservasi 
+                WHERE ruangan = %s 
+                AND tanggal = %s 
+                AND status = 'Disetujui'
+                AND (
+                    (waktu_mulai <= %s AND waktu_selesai > %s)
+                    OR (waktu_mulai < %s AND waktu_selesai >= %s)
+                    OR (%s <= waktu_mulai AND %s > waktu_mulai)
+                )
+            """, (ruangan, tanggal, waktu_mulai, waktu_mulai, 
+                  waktu_selesai, waktu_selesai, waktu_mulai, waktu_selesai))
             
-            # Modified execute with lampiran
-            cursor.execute(insert_query, (
-                nip, ruangan, tanggal, waktu_mulai, waktu_selesai, keperluan,
-                'Menunggu', waktu_pengajuan, lampiran_filename
-            ))
+            if cursor.fetchone():
+                flash("Ruangan sudah direservasi pada waktu tersebut!", "danger")
+                conn.close()
+                return redirect(url_for('ajukan_reservasi'))
+
+            # Simpan data ke database
+            cursor.execute("""
+                INSERT INTO reservasi (nip, ruangan, tanggal, waktu_mulai, waktu_selesai, keperluan, status, waktu_pengajuan)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, NOW())
+            """, (nip, ruangan, tanggal, waktu_mulai, waktu_selesai, keperluan, 'Menunggu'))
             conn.commit()
-            conn.close()
 
-            flash("Reservasi berhasil diajukan!", "success")
+            # Ambil data pemesan untuk notifikasi
+            cursor.execute("SELECT nama FROM pegawai WHERE nip = %s", (nip,))
+            pemesan = cursor.fetchone()
 
-            # Kirim notifikasi ke semua admin
-            conn = get_db_connection()
-            cursor = conn.cursor(dictionary=True)
-            cursor.execute("SELECT nama, no_wa FROM pegawai WHERE role = 'admin'")
+            # Kirim notifikasi ke admin
+            cursor.execute("SELECT no_wa FROM pegawai WHERE role = 'admin'")
             admin_list = cursor.fetchall()
-            conn.close()
-
+            
             for admin in admin_list:
                 if admin['no_wa']:
-                    pesan_admin = (
-                        f"[NOTIFIKASI RESERVASI BARU]\n\n"
-                        f"Ada pengajuan reservasi dari {session['nama']}:\n"
-                        f"- Ruangan: {ruangan}\n"
-                        f"- Tanggal: {tanggal}\n"
-                        f"- Waktu: {waktu_mulai} - {waktu_selesai}\n"
-                        f"- Keperluan: {keperluan}\n\n"
-                        f"Silakan periksa dan setujui/tolak melalui panel admin."
+                    pesan = (
+                        f"[PENGAJUAN RESERVASI BARU]\n\n"
+                        f"Pemesan: {pemesan['nama']}\n"
+                        f"Ruangan: {ruangan}\n"
+                        f"Tanggal: {tanggal}\n"
+                        f"Waktu: {waktu_mulai} - {waktu_selesai}\n"
+                        f"Keperluan: {keperluan}\n\n"
+                        f"Silakan verifikasi pengajuan Reservasi melalui panel admin."
                     )
-                    kirim_wa(admin['no_wa'], pesan_admin)
+                    kirim_wa(admin['no_wa'], pesan)
 
-            return redirect(url_for('dashboard_pegawai'))
+            conn.close()
+            flash("Reservasi berhasil diajukan!", "success")
+            return redirect(url_for('dashboard'))
 
         except Exception as e:
-            print("[ERROR RESERVASI]:", e)
-            flash("Terjadi kesalahan saat mengajukan reservasi.", "danger")
+            print(f"[ERROR] {str(e)}")
+            if 'conn' in locals():
+                conn.close()
+            flash("Terjadi kesalahan saat mengajukan reservasi. Silakan coba lagi.", "danger")
             return redirect(url_for('ajukan_reservasi'))
 
+    # Render template untuk GET request
     return render_template('ajukan_reservasi.html', ruangan_list=ruangan_list)
 
 @app.route('/reservasi-saya')
@@ -421,6 +385,7 @@ def setujui_reservasi(id):
         f"Reservasi Anda untuk ruang *{data['ruangan']}* pada "
         f"{data['tanggal']} pukul {data['waktu_mulai']} - {data['waktu_selesai']} "
         f"telah *DISETUJUI* oleh admin."
+        f"> _Dikirim oleh adm. KOMNAS HAM RI_"
     )
 
     if data['no_wa']:
@@ -449,20 +414,27 @@ def tolak_reservasi(id):
     if not data:
         flash('Reservasi tidak ditemukan.', 'danger')
         conn.close()
-        return redirect(url_for('kelola_reservasi'))  # <--- redirect ke kelola_reservasi
+        return redirect(url_for('kelola_reservasi'))
 
     # Update status menjadi Ditolak
     cursor.execute("UPDATE reservasi SET status = 'Ditolak' WHERE id = %s", (id,))
     conn.commit()
-    conn.close()
+
+    # Ambil kontak admin
+    cursor.execute("SELECT nama, no_wa FROM pegawai WHERE role = 'admin' LIMIT 1")
+    admin = cursor.fetchone()
+    admin_contact = admin['no_wa'] if admin else "08123456789"  # Ganti dengan nomor default jika tidak ada admin
 
     # Kirim WA jika nomor tersedia
     pesan = (
         f"Hai, {data['nama']}.\n\n"
-        f"Reservasi Anda untuk ruang *{data['ruangan']}* pada "
+        f"Mohon maaf, reservasi Anda untuk ruang *{data['ruangan']}* pada "
         f"{data['tanggal']} pukul {data['waktu_mulai']} - {data['waktu_selesai']} "
         f"telah *DITOLAK* oleh admin.\n\n"
-        f"Silakan ajukan kembali dengan waktu atau ruangan lain."
+        f"Untuk informasi lebih lanjut mengenai alasan penolakan, "
+        f"silakan hubungi admin di nomor berikut:\n"
+        f"*{admin_contact}*\n\n"
+        f"> _Dikirim oleh adm. KOMNAS HAM RI_"
     )
 
     if data.get('no_wa'):
@@ -471,7 +443,7 @@ def tolak_reservasi(id):
         print("[INFO] Nomor WhatsApp kosong, tidak mengirim WA.")
 
     flash('Reservasi ditolak & notifikasi dikirim.', 'success')
-    return redirect(url_for('kelola_reservasi'))  # <--- redirect ke kelola_reservasi
+    return redirect(url_for('kelola_reservasi'))
 
 @app.route('/hapus-reservasi/<int:id>', methods=['POST'])
 @admin_required
@@ -487,18 +459,34 @@ def hapus_reservasi(id):
 @app.route('/kelola-reservasi')
 @admin_required
 def kelola_reservasi():
+    # Ambil parameter filter dari URL
+    filter_status = request.args.get('filter', 'all')
+    
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("""
-        SELECT r.id, p.nama, r.ruangan as nama_ruangan, r.tanggal, r.waktu_mulai, r.waktu_selesai, r.keperluan as kegiatan, r.status
+    
+    # Base query
+    base_query = """
+        SELECT r.id, p.nama, r.ruangan as nama_ruangan, 
+               r.tanggal, r.waktu_mulai, r.waktu_selesai, 
+               r.keperluan as kegiatan, r.status
         FROM reservasi r
         JOIN pegawai p ON r.nip = p.nip
-        ORDER BY r.tanggal DESC, r.waktu_mulai DESC
-    """)
+    """
+    
+    # Tambahkan filter sesuai status yang dipilih
+    if filter_status != 'all':
+        base_query += " WHERE r.status = %s"
+        cursor.execute(base_query + " ORDER BY r.tanggal DESC, r.waktu_mulai DESC", (filter_status,))
+    else:
+        cursor.execute(base_query + " ORDER BY r.tanggal DESC, r.waktu_mulai DESC")
+    
     reservasi = cursor.fetchall()
     conn.close()
 
-    return render_template('kelola_reservasi.html', reservasi=reservasi)
+    return render_template('kelola_reservasi.html', 
+                         reservasi=reservasi, 
+                         current_filter=filter_status)
 
 # --- Tambahkan route untuk kelola pegawai ---
 @app.route('/kelola_pegawai')
@@ -617,7 +605,7 @@ def notifikasi_otomatis():
         return redirect(url_for('login'))
     jumlah = kirim_notifikasi_otomatis()
     flash(f'Notifikasi otomatis dikirim ke {jumlah} pegawai.', 'success')
-    return redirect(url_for('dashboard_admin'))
+    return redirect(url_for('kelola_reservasi'))
 
 @app.route('/export_excel')
 @admin_required
@@ -834,99 +822,49 @@ def ajukan_akun():
             nip = request.form['nip']
             nama = request.form['nama']
             no_wa = request.form['no_wa']
-            isi_surat = request.form['isi_surat']
+            isi_surat = request.form.get('isi_surat', 'Pengajuan akun baru.')
+            file_surat = request.files.get('file_surat')  # Ambil file surat
 
-            # Handle file upload
-            file_surat = request.files.get('file_surat')
-            file_surat_name = None
+            # Validasi NIP hanya angka dan maksimal 18 digit
+            if not nip.isdigit() or len(nip) < 18:
+                flash("NIP harus berupa angka dengan maksimal 18 digit.", "danger")
+                return redirect(url_for('ajukan_akun'))
+
+            # Proses file surat
+            file_surat_filename = None
             if file_surat and file_surat.filename != '':
-                print(f"[DEBUG] File yang diupload: {file_surat.filename}")
-                
-                # Pastikan ekstensi file adalah PDF
-                if not file_surat.filename.lower().endswith('.pdf'):
-                    flash("File harus dalam format PDF!", "danger")
-                    return redirect(url_for('ajukan_akun'))
-                
-                # Generate nama file yang unik
-                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-                file_surat_name = f"{timestamp}_{secure_filename(file_surat.filename)}"
-                print(f"[DEBUG] Nama file yang akan disimpan: {file_surat_name}")
-                
-                # Buat folder jika belum ada
-                upload_folder = os.path.join('static', 'uploads')
-                if not os.path.exists(upload_folder):
-                    os.makedirs(upload_folder)
-                    print(f"[DEBUG] Folder upload dibuat: {upload_folder}")
-                
-                # Simpan file
-                file_path = os.path.join(upload_folder, file_surat_name)
-                try:
-                    file_surat.save(file_path)
-                    print(f"[DEBUG] File disimpan di: {file_path}")
-                    
-                    # Verifikasi file tersimpan
-                    if os.path.exists(file_path):
-                        file_size = os.path.getsize(file_path)
-                        print(f"[DEBUG] File berhasil disimpan dengan ukuran: {file_size} bytes")
-                        
-                        # Verifikasi file bisa dibaca
-                        with open(file_path, 'rb') as f:
-                            content = f.read()
-                            print(f"[DEBUG] File bisa dibaca, ukuran konten: {len(content)} bytes")
-                    else:
-                        print("[ERROR] File gagal disimpan!")
-                        flash("Gagal menyimpan file PDF.", "danger")
-                        return redirect(url_for('ajukan_akun'))
-                except Exception as e:
-                    print(f"[ERROR] Gagal menyimpan file: {str(e)}")
-                    flash("Gagal menyimpan file PDF.", "danger")
-                    return redirect(url_for('ajukan_akun'))
+                file_surat_filename = secure_filename(file_surat.filename)
+                file_surat.save(os.path.join('static/uploads', file_surat_filename))
 
-            # Check if NIP already exists in pegawai table
+            # Simpan data ke database
             conn = get_db_connection()
             cursor = conn.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM pegawai WHERE nip = %s", (nip,))
-            if cursor.fetchone():
-                flash("NIP sudah terdaftar sebagai pegawai!", "danger")
-                return redirect(url_for('ajukan_akun'))
-
-            # Check if NIP already has pending request
-            cursor.execute("SELECT * FROM pengajuan_akun WHERE nip = %s AND status = 'Menunggu'", (nip,))
-            if cursor.fetchone():
-                flash("Anda sudah memiliki pengajuan yang sedang diproses!", "warning")
-                return redirect(url_for('ajukan_akun'))
-
-            # Insert new request with file information
-            print(f"[DEBUG] Menyimpan data ke database dengan file_surat: {file_surat_name}")
             cursor.execute('''
-                INSERT INTO pengajuan_akun (nip, nama, no_wa, isi_surat, file_surat, tanggal_pengajuan, status)
-                VALUES (%s, %s, %s, %s, %s, NOW(), 'Menunggu')
-            ''', (nip, nama, no_wa, isi_surat, file_surat_name))
+                INSERT INTO pengajuan_akun (nip, nama, no_wa, isi_surat, tanggal_pengajuan, status, file_surat)
+                VALUES (%s, %s, %s, %s, NOW(), 'Menunggu', %s)
+            ''', (nip, nama, no_wa, isi_surat, file_surat_filename))
             conn.commit()
-            print("[DEBUG] Data berhasil disimpan ke database")
 
-            # Kirim notifikasi ke semua admin
-            cursor.execute("SELECT nama, no_wa FROM pegawai WHERE role = 'admin'")
-            admins = cursor.fetchall()
-            cursor.close()
-            conn.close()
-
-            for admin in admins:
+            # Kirim notifikasi ke admin
+            cursor.execute("SELECT no_wa FROM pegawai WHERE role = 'admin'")
+            admin_list = cursor.fetchall()
+            for admin in admin_list:
                 if admin['no_wa']:
-                    pesan_admin = (
+                    pesan = (
                         f"[PENGAJUAN AKUN BARU]\n\n"
                         f"Nama: {nama}\n"
                         f"NIP: {nip}\n"
-                        f"Telah mengajukan permintaan akun reservasi.\n\n"
-                        f"Segera lakukan verifikasi di dashboard admin."
+                        f"No. WA: {no_wa}\n\n"
+                        f"Silakan verifikasi pengajuan melalui panel admin."
                     )
-                    kirim_wa(admin['no_wa'], pesan_admin)
+                    kirim_wa(admin['no_wa'], pesan)
 
+            conn.close()
             flash("Pengajuan akun berhasil dikirim!", "success")
             return redirect(url_for('login'))
 
         except Exception as e:
-            print(f"[ERROR PENGAJUAN]: {str(e)}")
+            print(f"[ERROR]: {str(e)}")
             flash("Terjadi kesalahan saat mengajukan akun.", "danger")
             return redirect(url_for('ajukan_akun'))
 
@@ -946,7 +884,7 @@ def verifikasi_pengajuan():
 
     return render_template('kelola_pengajuan.html', pengajuan=pengajuan)
 
-@app.route('/setujui-pengajuan/<int:id>', methods=['POST'])
+@app.route('/setujui_pengajuan/<int:id>', methods=['POST'])
 @admin_required
 def setujui_pengajuan(id):
     try:
@@ -970,7 +908,7 @@ def setujui_pengajuan(id):
             # Update request status
             cursor.execute("UPDATE pengajuan_akun SET status = 'Disetujui' WHERE id = %s", (id,))
             conn.commit()
-
+            
             # Send WhatsApp notification
             if data['no_wa']:
                 pesan = (
@@ -980,22 +918,30 @@ def setujui_pengajuan(id):
                     f"NIP: {data['nip']}\n"
                     f"Password: {default_password}\n\n"
                     f"Mohon segera ubah password Anda setelah login pertama."
+                    f"> _Dikirim oleh adm. KOMNAS HAM RI_"
                 )
                 kirim_wa(data['no_wa'], pesan)
 
-            flash("Pengajuan disetujui dan akun berhasil dibuat.", "success")
+            conn.close()
+            return jsonify({
+                'success': True,
+                'message': 'Pengajuan berhasil disetujui'
+            })
         else:
-            flash("Data pengajuan tidak ditemukan atau sudah diproses.", "danger")
-
-        conn.close()
-        return redirect(url_for('verifikasi_pengajuan'))
+            conn.close()
+            return jsonify({
+                'success': False,
+                'message': 'Data pengajuan tidak ditemukan atau sudah diproses'
+            }), 404
 
     except Exception as e:
         print(f"[ERROR VERIFIKASI]: {str(e)}")
-        flash("Terjadi kesalahan saat memverifikasi pengajuan.", "danger")
-        return redirect(url_for('verifikasi_pengajuan'))
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500
 
-@app.route('/tolak-pengajuan/<int:id>', methods=['POST'])
+@app.route('/tolak_pengajuan/<int:id>', methods=['POST'])
 @admin_required
 def tolak_pengajuan(id):
     try:
@@ -1010,39 +956,51 @@ def tolak_pengajuan(id):
             # Update request status
             cursor.execute("UPDATE pengajuan_akun SET status = 'Ditolak' WHERE id = %s", (id,))
             conn.commit()
+            
+            # Ambil kontak admin
+            cursor.execute("SELECT nama, no_wa FROM pegawai WHERE role = 'admin' LIMIT 1")
+            admin = cursor.fetchone()
+            admin_contact = admin['no_wa'] if admin else "08123456789"  # Ganti dengan nomor default jika tidak ada admin
 
             # Send WhatsApp notification
             if data['no_wa']:
                 pesan = (
                     f"Hai, {data['nama']}.\n\n"
-                    f"Mohon maaf, pengajuan akun Anda telah DITOLAK.\n"
-                    f"Silakan hubungi admin untuk informasi lebih lanjut."
+                    f"Mohon maaf, pengajuan akun Anda telah *DITOLAK*.\n\n"
+                    f"Untuk informasi lebih lanjut mengenai alasan penolakan, "
+                    f"silakan hubungi admin di nomor berikut:\n"
+                    f"*{admin_contact}*\n\n"
+                    f"> _Dikirim oleh adm. KOMNAS HAM RI_"
                 )
                 kirim_wa(data['no_wa'], pesan)
 
-            flash("Pengajuan berhasil ditolak.", "warning")
+            conn.close()
+            return jsonify({
+                'success': True,
+                'message': 'Pengajuan berhasil ditolak'
+            })
         else:
-            flash("Data pengajuan tidak ditemukan atau sudah diproses.", "danger")
-
-        conn.close()
-        return redirect(url_for('verifikasi_pengajuan'))
+            conn.close()
+            return jsonify({
+                'success': False,
+                'message': 'Data pengajuan tidak ditemukan atau sudah diproses'
+            }), 404
 
     except Exception as e:
         print(f"[ERROR VERIFIKASI]: {str(e)}")
-        flash("Terjadi kesalahan saat memverifikasi pengajuan.", "danger")
-        return redirect(url_for('verifikasi_pengajuan'))
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500
 
 @app.route('/surat_pengajuan')
 def surat_pengajuan():
-    # Get form data from query parameters
-    nama = request.args.get('nama')
-    nip = request.args.get('nip')
-    no_wa = request.args.get('no_wa')
-    isi_surat = request.args.get('isi_surat')
+    # Get form data from query parameters if available
+    nama = request.args.get('nama', '_________________')
+    nip = request.args.get('nip', '_________________')
+    no_wa = request.args.get('no_wa', '_________________')
+    isi_surat = request.args.get('isi_surat', 'Dengan ini mengajukan permohonan pembuatan akun untuk dapat menggunakan sistem reservasi ruang rapat Komnas HAM RI.')
     
-    if not all([nama, nip, no_wa, isi_surat]):
-        return "Data tidak lengkap", 400
-        
     return render_template('surat_pengajuan.html', 
                          nama=nama,
                          nip=nip,
@@ -1099,6 +1057,7 @@ def lupa_password():
                 f"Password baru Anda adalah: *{new_password}*\n\n"
                 f"Silakan login dengan password baru ini.\n"
                 f"Mohon segera ubah password Anda setelah login."
+                f"> _Dikirim oleh adm. KOMNAS HAM RI_"
             )
             kirim_wa(no_wa, pesan)
             
@@ -1158,6 +1117,149 @@ def profile():
     conn.close()
 
     return render_template('profile.html', user=user)
+
+@app.route('/generate-pdf')
+def generate_pdf():
+    nip = request.args.get('nip')
+    nama = request.args.get('nama')
+    no_wa = request.args.get('no_wa')
+
+    # Validasi input
+    if not nip or not nama or not no_wa:
+        flash("Semua data harus diisi untuk mengunduh surat.", "danger")
+        return redirect(url_for('ajukan_akun'))
+
+    # Tambahkan variabel now
+    now = datetime.now()
+
+    # Render template surat_pengajuan.html
+    rendered = render_template('surat_pengajuan.html', nip=nip, nama=nama, no_wa=no_wa, now=now)
+
+    print("[DEBUG] Rendered HTML:", rendered[:500])  # Cetak 500 karakter pertama dari HTML
+
+    # Generate PDF
+    path_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+    config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+    pdf = pdfkit.from_string(
+        rendered,
+        False,
+        configuration=config,
+        options={
+            'enable-local-file-access': None,  # Aktifkan akses file lokal
+            'encoding': 'UTF-8'
+        }
+    )
+    # Return PDF as response
+    response = make_response(pdf)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = f'attachment; filename=surat_pengajuan_{nip}.pdf'
+    return response
+
+@app.route('/get-reservations/<type>')
+@admin_required
+def get_reservations(type):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    if type == 'all':
+        query = """
+            SELECT r.*, p.nama 
+            FROM reservasi r 
+            JOIN pegawai p ON r.nip = p.nip 
+            ORDER BY r.tanggal DESC, r.waktu_mulai DESC
+        """
+        cursor.execute(query)
+    else:
+        status_map = {
+            'approved': 'Disetujui',
+            'rejected': 'Ditolak',
+            'pending': 'Menunggu'
+        }
+        query = """
+            SELECT r.*, p.nama 
+            FROM reservasi r 
+            JOIN pegawai p ON r.nip = p.nip 
+            WHERE r.status = %s 
+            ORDER BY r.tanggal DESC, r.waktu_mulai DESC
+        """
+        cursor.execute(query, (status_map.get(type),))
+    
+    reservations = cursor.fetchall()
+    conn.close()
+    
+    # Convert datetime objects to string for JSON serialization
+    for res in reservations:
+        res['tanggal'] = res['tanggal'].strftime('%Y-%m-%d')
+        res['waktu_mulai'] = str(res['waktu_mulai'])
+        res['waktu_selesai'] = str(res['waktu_selesai'])
+    
+    return jsonify(reservations)
+
+@app.route('/get-reservations-by-date')
+def get_reservations_by_date():  # Hapus @admin_required karena ini diakses publik
+    date = request.args.get('date')
+    print(f"[DEBUG] Tanggal yang diterima: {date}")
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    query = """
+        SELECT r.*, p.nama 
+        FROM reservasi r 
+        JOIN pegawai p ON r.nip = p.nip 
+        WHERE r.tanggal = %s 
+        AND r.status = 'Disetujui'  # Hanya tampilkan yang disetujui
+        ORDER BY r.waktu_mulai ASC
+    """
+    cursor.execute(query, (date,))
+    reservations = cursor.fetchall()
+    print(f"[DEBUG] Data reservasi: {reservations}")
+
+    conn.close()
+
+    # Convert datetime objects to string for JSON serialization
+    for res in reservations:
+        res['tanggal'] = res['tanggal'].strftime('%Y-%m-%d')
+        res['waktu_mulai'] = str(res['waktu_mulai'])
+        res['waktu_selesai'] = str(res['waktu_selesai'])
+
+    return jsonify(reservations)
+
+@app.route('/check-available', methods=['POST'])
+def check_available():
+    ruangan = request.form.get('ruangan')
+    tanggal = request.form.get('tanggal')
+    waktu_mulai = request.form.get('waktu_mulai')
+    waktu_selesai = request.form.get('waktu_selesai')
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    # Cek apakah ada reservasi yang overlap
+    query = """
+        SELECT r.*, p.nama 
+        FROM reservasi r
+        JOIN pegawai p ON r.nip = p.nip
+        WHERE r.ruangan = %s 
+        AND r.tanggal = %s 
+        AND r.status = 'Disetujui'
+        AND (
+            (r.waktu_mulai <= %s AND r.waktu_selesai > %s)
+            OR (r.waktu_mulai < %s AND r.waktu_selesai >= %s)
+            OR (%s <= r.waktu_mulai AND %s > r.waktu_mulai)
+        )
+    """
+    cursor.execute(query, (ruangan, tanggal, waktu_mulai, waktu_mulai, 
+                         waktu_selesai, waktu_selesai, waktu_mulai, waktu_selesai))
+    existing = cursor.fetchone()
+    conn.close()
+
+    if existing:
+        return jsonify({
+            'available': False,
+            'message': f"Ruangan sudah direservasi oleh {existing['nama']} pada jam {existing['waktu_mulai']} - {existing['waktu_selesai']}"
+        })
+    return jsonify({'available': True})
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

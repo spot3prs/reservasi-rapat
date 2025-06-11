@@ -3,6 +3,11 @@
 {% block title %}Kelola Pengajuan | Komnas HAM RI{% endblock %}
 
 {% block content %}
+<!-- Add SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
+<!-- Add SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+
 <style>
     .card {
         background: #fff;
@@ -108,6 +113,7 @@
                         <th>No. WhatsApp</th>
                         <th>Tanggal Pengajuan</th>
                         <th>Status</th>
+                        <th>Surat</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -124,23 +130,27 @@
                             </span>
                         </td>
                         <td>
+                            {% if p.file_surat %}
+                            <a href="{{ url_for('view_pdf', filename=p.file_surat) }}" class="btn btn-info btn-sm" target="_blank">
+                                <i class="fas fa-file-pdf"></i> Lihat Surat
+                            </a>
+                            {% else %}
+                            <span class="text-muted">Tidak ada surat</span>
+                            {% endif %}
+                        </td>
+                        <td>
                             <div class="action-buttons">
                                 {% if p.status == 'Menunggu' %}
-                                <form action="{{ url_for('setujui_pengajuan', id=p.id) }}" method="POST" style="display: inline;">
+                                <form action="{{ url_for('setujui_pengajuan', id=p.id) }}" method="POST" style="display: inline;" class="setujui-form">
                                     <button type="submit" class="btn btn-success btn-sm">
                                         <i class="fas fa-check"></i> Setujui
                                     </button>
                                 </form>
-                                <form action="{{ url_for('tolak_pengajuan', id=p.id) }}" method="POST" style="display: inline;">
+                                <form action="{{ url_for('tolak_pengajuan', id=p.id) }}" method="POST" style="display: inline;" class="tolak-form">
                                     <button type="submit" class="btn btn-danger btn-sm">
                                         <i class="fas fa-times"></i> Tolak
                                     </button>
                                 </form>
-                                {% endif %}
-                                {% if p.file_surat %}
-                                <a href="{{ url_for('view_pdf', filename=p.file_surat) }}" class="btn btn-info btn-sm" target="_blank">
-                                    <i class="fas fa-file-pdf"></i> Lihat Surat
-                                </a>
                                 {% endif %}
                             </div>
                         </td>
@@ -151,4 +161,114 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle Setujui form submission
+    document.querySelectorAll('.setujui-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: 'Pengajuan berhasil disetujui',
+                        icon: 'success',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: data.message || 'Terjadi kesalahan saat menyetujui pengajuan',
+                        icon: 'error',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Terjadi kesalahan saat menyetujui pengajuan',
+                    icon: 'error',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            });
+        });
+    });
+
+    // Handle Tolak form submission
+    document.querySelectorAll('.tolak-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: 'Pengajuan berhasil ditolak',
+                        icon: 'success',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: data.message || 'Terjadi kesalahan saat menolak pengajuan',
+                        icon: 'error',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Terjadi kesalahan saat menolak pengajuan',
+                    icon: 'error',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            });
+        });
+    });
+});
+</script>
 {% endblock %}

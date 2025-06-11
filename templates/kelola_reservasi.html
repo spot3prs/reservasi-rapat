@@ -17,6 +17,9 @@
         <h2 class="dashboard-title mb-1" style="font-size: 1.8rem; font-weight: 600; color: #2c3e50; margin: 0;">
             Laporan Reservasi
         </h2>
+        <a href="{{ url_for('notifikasi_otomatis') }}" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 8px; background: #003366; color: white; text-decoration: none; transition: all 0.3s ease;">
+            <i class="fas fa-bell"></i> Kirim Pengingat Hari Ini
+        </a>
     </div>
 
     <!-- Form Export Laporan -->
@@ -146,6 +149,7 @@
                                     min-width: 160px;
                                     margin-top: 8px;
                                     background: white;
+                                    transform: translateY(0);
                                 ">
                                     {% if r.status == 'Menunggu' %}
                                     <li style="position: relative; z-index: 9999; margin-bottom: 4px;">
@@ -206,6 +210,26 @@
             </table>
         </div>
     </div>
+
+    <!-- Tambahkan filter buttons -->
+    <!-- <div class="filter-buttons mb-3">
+        <a href="{{ url_for('kelola_reservasi', filter='all') }}" 
+           class="btn btn-{{ 'primary' if current_filter == 'all' else 'outline-primary' }}">
+            Semua
+        </a>
+        <a href="{{ url_for('kelola_reservasi', filter='Disetujui') }}"
+           class="btn btn-{{ 'success' if current_filter == 'Disetujui' else 'outline-success' }}">
+            Disetujui
+        </a>
+        <a href="{{ url_for('kelola_reservasi', filter='Ditolak') }}"
+           class="btn btn-{{ 'danger' if current_filter == 'Ditolak' else 'outline-danger' }}">
+            Ditolak
+        </a>
+        <a href="{{ url_for('kelola_reservasi', filter='Menunggu') }}"
+           class="btn btn-{{ 'warning' if current_filter == 'Menunggu' else 'outline-warning' }}">
+            Menunggu
+        </a>
+    </div> -->
 </div>
 
 <style>
@@ -244,6 +268,49 @@ input:focus, select:focus {
 
 .table-responsive::-webkit-scrollbar-thumb:hover {
     background: #002244;
+}
+
+.filter-buttons {
+    margin-bottom: 1rem;
+}
+.filter-buttons .btn {
+    margin-right: 0.5rem;
+}
+
+/* Fix dropdown menu positioning */
+.dropdown-menu {
+    margin-top: 0 !important;
+    transform: translate3d(0px, 38px, 0px) !important;
+}
+
+.dropdown-menu.show {
+    display: block;
+    position: absolute;
+    will-change: transform;
+    top: 0px;
+    left: 0px;
+    transform: translate3d(0px, 38px, 0px) !important;
+}
+
+/* Ensure dropdown is above other elements */
+.dropdown {
+    position: relative;
+    z-index: 1000;
+}
+
+/* Add spacing between rows to prevent overlap */
+.styled-table tbody tr {
+    position: relative;
+    z-index: 1;
+}
+
+.styled-table tbody tr:hover {
+    z-index: 2;
+}
+
+/* Ensure dropdown menu is always on top when open */
+.dropdown-menu.show {
+    z-index: 9999;
 }
 </style>
 

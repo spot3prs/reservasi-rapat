@@ -1,0 +1,14 @@
+@startuml
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Pegawai|
+start
+:Masuk ke menu Reservasi Saya;
+
+|Sistem|
+:Ambil data reservasi berdasarkan NIP Pegawai;
+:Tampilkan daftar reservasi milik Pegawai;
+stop
+@enduml

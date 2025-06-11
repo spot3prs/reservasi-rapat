@@ -1,0 +1,17 @@
+@startuml
+actor Pegawai
+participant "Halaman Ajukan Akun" as Form
+participant Sistem
+database Database
+
+Pegawai -> Form : Buka halaman Ajukan Akun
+Pegawai -> Form : Isi NIP, Nama, No. WA, Upload Surat
+Pegawai -> Form : Klik tombol "Ajukan Akun"
+
+Form -> Sistem : Kirim data pengajuan akun
+Sistem -> Sistem : Validasi data
+Sistem -> Database : Simpan data pengajuan akun
+Database --> Sistem : Konfirmasi tersimpan
+Sistem -> Form : Tampilkan notifikasi berhasil
+Form --> Pegawai : Menampilkan pesan "Pengajuan akun berhasil dikirim"
+@enduml

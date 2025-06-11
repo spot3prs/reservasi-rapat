@@ -1,71 +1,246 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <title>Ajukan Akun | Komnas HAM RI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-</head>
-<body>
-    <header class="gov-header">
-        <div class="header-content">
-            <img src="{{ url_for('static', filename='img/logo-komnas.png') }}" alt="Logo Komnas HAM" class="header-logo">
+{% extends "layout.html" %}
+
+{% block title %}Ajukan Akun | Komnas HAM RI{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2><i class="fas fa-user-plus"></i> Ajukan Akun Baru</h2>
         </div>
-    </header>
-    <main class="main-content">
-        <div class="container">
-            <div class="card">
-                <div class="card-header">
-                    <h2>Ajukan Akun Baru</h2>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data" id="formPengajuan" action="{{ url_for('ajukan_akun') }}">
+                <div class="form-group">
+                    <label for="nip"><i class="fas fa-id-card"></i> NIP</label>
+                    <input type="text" 
+                           id="nip" 
+                           name="nip" 
+                           required 
+                           class="form-control"
+                           pattern="^\d{1,18}$"
+                           maxlength="18"
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                           onkeyup="validateForm()"
+                           placeholder="Masukkan NIP Anda (maksimal 18 angka)">
+                    <small class="form-text text-muted">Hanya angka, maksimal 18 digit.</small>
+                    <div id="nipError" class="invalid-feedback" style="display: none;">
+                        NIP harus berupa angka dengan maksimal 18 digit.
+                    </div>
                 </div>
-                <div class="card-body">
-                    <form method="POST" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <label for="nip">NIP</label>
-                            <input type="text" name="nip" id="nip" required>
-                        </div>
 
-                        <div class="form-group">
-                            <label for="nama">Nama Lengkap</label>
-                            <input type="text" name="nama" id="nama" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="no_wa">Nomor WhatsApp</label>
-                            <input type="text" name="no_wa" id="no_wa" required>
-                            <small class="form-text">Contoh: 08123456789 (tanpa awalan 0 atau +62)</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="isi_surat">Isi Surat Pengajuan</label>
-                            <textarea name="isi_surat" id="isi_surat" rows="4" required></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="file_surat">File Surat Pengajuan (PDF)</label>
-                            <input type="file" name="file_surat" id="file_surat" accept=".pdf" required>
-                            <small class="form-text">Upload surat pengajuan dalam format PDF</small>
-                        </div>
-
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-primary">Ajukan Akun</button>
-                            <a href="{{ url_for('login') }}" class="btn btn-secondary">Kembali ke Login</a>
-                        </div>
-                    </form>
+                <div class="form-group">
+                    <label for="nama"><i class="fas fa-user"></i> Nama Lengkap</label>
+                    <input type="text" name="nama" id="nama" placeholder="Masukkan nama lengkap Anda" required>
                 </div>
-            </div>
-        </div>
-    </main>
 
-    {% include 'toast.html' %}
+                <div class="form-group">
+                    <label for="no_wa"><i class="fab fa-whatsapp"></i> Nomor WhatsApp</label>
+                    <input type="text" name="no_wa" id="no_wa" placeholder="628123456789" required>
+                    <small class="form-text">Contoh: 628123456789 (gunakan awalan 62)</small>
+                </div>
 
-    <footer class="gov-footer">
-        <div class="footer-content">
-            <p>&copy; 2024 Komnas HAM RI. All rights reserved.</p>
+                <!-- Tambahkan tombol "Unduh Surat" di sini -->
+                <div class="form-group">
+                    <button type="button" id="generatePdfBtn" class="btn btn-info">
+                        <i class="fas fa-download"></i> Unduh Surat
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <label for="file_surat"><i class="fas fa-file-pdf"></i> File Surat Pengajuan (PDF)</label>
+                    <input type="file" name="file_surat" id="file_surat" accept=".pdf" required>
+                    <small class="form-text">Upload surat pengajuan dalam format PDF</small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Ajukan Akun
+                    </button>
+                    <a href="{{ url_for('login') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Kembali ke Login
+                    </a>
+                </div>
+            </form>
         </div>
-    </footer>
-</body>
-</html>
+    </div>
+</div>
+
+<style>
+    .card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.2s ease;
+        margin-top: 2rem;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .card-header {
+        background: #003366;
+        color: white;
+        padding: 1.5rem;
+        text-align: center;
+    }
+    
+    .card-header h2 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+    
+    .card-body {
+        padding: 2rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-weight: 500;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 1rem;
+        transition: border-color 0.2s ease;
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus {
+        border-color: #003366;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.1);
+    }
+    
+    .form-text {
+        display: block;
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.875rem;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .btn-primary {
+        background: #003366;
+        color: white;
+        flex: 1;
+    }
+    
+    .btn-primary:hover {
+        background: #002244;
+    }
+    
+    .btn-secondary {
+        background: #f5f5f5;
+        color: #333;
+    }
+    
+    .btn-secondary:hover {
+        background: #e0e0e0;
+    }
+
+    .btn-info {
+        background: #17a2b8;
+        color: white;
+    }
+
+    .btn-info:hover {
+        background: #138496;
+    }
+    
+    @media (max-width: 768px) {
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+function validateForm() {
+    const nip = document.getElementById('nip').value;
+    const submitBtn = document.querySelector('button[type="submit"]');
+    const nipError = document.getElementById('nipError');
+    
+    // Validasi NIP (hanya angka dan maksimal 18 digit)
+    const isValidNip = /^\d{1,18}$/.test(nip);
+    
+    if (!isValidNip) {
+        submitBtn.disabled = true;
+        nipError.style.display = 'block';
+    } else {
+        submitBtn.disabled = false;
+        nipError.style.display = 'none';
+    }
+}
+
+// Tambahkan validasi saat form disubmit
+document.getElementById('formPengajuan').addEventListener('submit', function(e) {
+    const nip = document.getElementById('nip').value;
+    if (!/^\d{1,18}$/.test(nip)) {
+        e.preventDefault();
+        alert('NIP harus berupa angka dengan maksimal 18 digit.');
+    }
+});
+
+// Validasi input NIP hanya angka
+document.getElementById('nip').addEventListener('input', function (e) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+    if (this.value.length > 18) {
+        this.value = this.value.slice(0, 18);
+    }
+    validateForm();
+});
+
+document.getElementById('generatePdfBtn').addEventListener('click', function () {
+    const nip = document.getElementById('nip').value;
+    const nama = document.getElementById('nama').value;
+    const noWa = document.getElementById('no_wa').value;
+
+    if (!nip || !nama || !noWa) {
+        alert('Harap isi semua kolom (NIP, Nama Lengkap, dan Nomor WhatsApp) sebelum mengunduh surat.');
+        return;
+    }
+
+    // Redirect ke route Flask untuk generate PDF
+    const url = `{{ url_for('generate_pdf') }}?nip=${encodeURIComponent(nip)}&nama=${encodeURIComponent(nama)}&no_wa=${encodeURIComponent(noWa)}`;
+    window.location.href = url;
+});
+</script>
+{% endblock %}
 

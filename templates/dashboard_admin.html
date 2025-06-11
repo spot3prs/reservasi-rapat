@@ -12,21 +12,21 @@
         <canvas id="reservasiChart"></canvas>
     </div>
 
-    <!-- Stat Cards (Dipindah ke bawah) -->
+    <!-- Stat Cards dengan onClick event -->
     <div class="stats-section">
-        <div class="stat-card">
+        <div class="stat-card" onclick="redirectToKelola('all')">
             <h3>Total Reservasi</h3>
             <p>{{ total_semua }}</p>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" onclick="redirectToKelola('Disetujui')">
             <h3>Disetujui</h3>
             <p>{{ total_disetujui }}</p>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" onclick="redirectToKelola('Ditolak')">
             <h3>Ditolak</h3>
             <p>{{ total_ditolak }}</p>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" onclick="redirectToKelola('Menunggu')">
             <h3>Menunggu</h3>
             <p>{{ total_menunggu }}</p>
         </div>
@@ -77,6 +77,135 @@
             document.getElementById('reservasiChart'),
             config
         );
+    </script>
+
+    <!-- Modal untuk setiap kategori -->
+    <div id="reservationModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>Ruangan</th>
+                            <th>Tanggal</th>
+                            <th>Waktu</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    .stat-card {
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .stat-card:hover {
+        transform: scale(1.05);
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-height: 80vh;
+        overflow-y: auto;
+        border-radius: 5px;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close:hover {
+        color: black;
+    }
+    </style>
+
+    <script>
+    const modal = document.getElementById('reservationModal');
+    const span = document.getElementsByClassName('close')[0];
+    const modalTitle = document.getElementById('modalTitle');
+    const modalTableBody = document.getElementById('modalTableBody');
+
+    function showModal(type) {
+        fetch(`/get-reservations/${type}`)
+            .then(response => response.json())
+            .then(data => {
+                modalTitle.textContent = getTitleByType(type);
+                modalTableBody.innerHTML = '';
+                
+                data.forEach(reservation => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${reservation.nama}</td>
+                        <td>${reservation.ruangan}</td>
+                        <td>${reservation.tanggal}</td>
+                        <td>${reservation.waktu_mulai} - ${reservation.waktu_selesai}</td>
+                        <td><span class="badge bg-${getStatusColor(reservation.status)}">${reservation.status}</span></td>
+                    `;
+                    modalTableBody.appendChild(row);
+                });
+                modal.style.display = 'block';
+            });
+    }
+
+    function getTitleByType(type) {
+        switch(type) {
+            case 'all': return 'Semua Reservasi';
+            case 'approved': return 'Reservasi Disetujui';
+            case 'rejected': return 'Reservasi Ditolak';
+            case 'pending': return 'Reservasi Menunggu';
+            default: return 'Reservasi';
+        }
+    }
+
+    function getStatusColor(status) {
+        switch(status) {
+            case 'Disetujui': return 'success';
+            case 'Ditolak': return 'danger';
+            case 'Menunggu': return 'warning';
+            default: return 'secondary';
+        }
+    }
+
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    function redirectToKelola(status) {
+        window.location.href = `/kelola-reservasi?filter=${status}`;
+    }
     </script>
 </div>
 {% endblock %}

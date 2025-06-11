@@ -1,0 +1,14 @@
+@startuml
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Admin|
+start
+:Login berhasil;
+:Masuk ke halaman Dashboard;
+
+|Sistem|
+:Tampilkan statistik sistem dan menu navigasi;
+stop
+@enduml

@@ -1,0 +1,14 @@
+@startuml
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Admin|
+start
+:Masuk ke menu Kalender Jadwal;
+
+|Sistem|
+:Ambil data semua jadwal dari database;
+:Tampilkan kalender interaktif dengan status reservasi;
+stop
+@enduml

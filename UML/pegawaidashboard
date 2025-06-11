@@ -1,0 +1,21 @@
+@startuml
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Pegawai|
+start
+:Login berhasil;
+:Masuk ke halaman Dashboard;
+:Lihat menu navigasi;
+
+|Sistem|
+:Tampilkan tampilan dashboard dan menu fitur;
+
+|Pegawai|
+:Pilih salah satu fitur;
+
+|Sistem|
+:Tampilkan isi halaman sesuai fitur yang dipilih;
+stop
+@enduml

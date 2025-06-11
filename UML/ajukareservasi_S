@@ -1,0 +1,21 @@
+@startuml
+actor Pegawai
+participant "Halaman Ajukan Reservasi" as Form
+participant Sistem
+database Database
+participant "Admin" as Admin
+
+Pegawai -> Form : Buka halaman Ajukan Reservasi
+Pegawai -> Form : Isi form (ruangan, waktu, keperluan, lampiran)
+Pegawai -> Form : Klik tombol "Ajukan"
+
+Form -> Sistem : Kirim data reservasi
+Sistem -> Sistem : Validasi data
+Sistem -> Database : Simpan data reservasi (status: Menunggu)
+Database --> Sistem : Konfirmasi berhasil disimpan
+
+Sistem -> Form : Tampilkan notifikasi pengajuan berhasil
+Form --> Pegawai : Menampilkan pesan konfirmasi
+
+Sistem -> Admin : Kirim notifikasi reservasi baru
+@enduml

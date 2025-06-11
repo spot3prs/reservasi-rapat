@@ -1,0 +1,197 @@
+Sama sekali tidak merepotkan, kawan 🤝
+Sebaliknya — ini justru *tahapan terbaik* yang Anda lakukan: memahami dengan benar sebelum masuk sidang skripsi. Yuk kita bahas dengan bahasa skripsi + analogi agar Anda **benar-benar siap**!
+
+---
+
+## 🎓 Penjelasan Lengkap Class Diagram Anda
+
+---
+
+### 🧩 1. **Class Pegawai**
+
+```plantuml
+class Pegawai {
+  +nip: String
+  +nama: String
+  +no_wa: String
+  +password: String
+  +login()
+  +ajukanAkun()
+  +ajukanReservasi()
+  +ubahPassword()
+}
+```
+
+#### 📌 Makna:
+
+* Class ini merepresentasikan **pengguna internal** yang dapat mengakses sistem: **pegawai Komnas HAM RI**
+* Atribut seperti `nip`, `nama`, `no_wa`, dan `password` digunakan untuk identifikasi dan login.
+* Method-nya sesuai peran pegawai:
+
+  * `login()` → otentikasi masuk
+  * `ajukanAkun()` → jika belum punya akun
+  * `ajukanReservasi()` → untuk pesan ruang rapat
+  * `ubahPassword()` → fitur profil
+
+---
+
+### 🧩 2. **Class Admin**
+
+```plantuml
+class Admin {
+  +nip: String
+  +password: String
+  +login()
+  +verifikasiAkun()
+  +kelolaReservasi()
+  +kelolaPegawai()
+  +ubahPassword()
+}
+```
+
+#### 📌 Makna:
+
+* Admin adalah **pengelola sistem**, dengan hak akses penuh
+* Atribut `nip` dan `password` untuk login
+* Method:
+
+  * `verifikasiAkun()` → menyetujui/tolak pengajuan akun pegawai
+  * `kelolaReservasi()` → menyetujui/tolak reservasi
+  * `kelolaPegawai()` → data master pegawai
+  * `ubahPassword()` → fitur mandiri
+
+---
+
+### 🧩 3. **Class Reservasi**
+
+```plantuml
+class Reservasi {
+  +id: int
+  +tanggal: Date
+  +waktu_mulai: Time
+  +waktu_selesai: Time
+  +keperluan: String
+  +lampiran: File
+  +status: String
+  +ajukan()
+  +verifikasi()
+}
+```
+
+#### 📌 Makna:
+
+* Class ini adalah **inti fungsional sistem**: memfasilitasi permintaan ruang rapat
+* Atribut mencakup semua detail reservasi: waktu, keperluan, lampiran, dan status
+* Method:
+
+  * `ajukan()` → saat pegawai mengirim permintaan
+  * `verifikasi()` → saat admin menyetujui atau menolak
+
+---
+
+### 🧩 4. **Class Ruangan**
+
+```plantuml
+class Ruangan {
+  +id: int
+  +nama: String
+  +lokasi: String
+  +kapasitas: int
+}
+```
+
+#### 📌 Makna:
+
+* Menyimpan informasi ruang rapat: seperti `Ruang Sidang 1`, lokasi, dan kapasitas.
+* Tidak punya method karena hanya data master / statis.
+
+---
+
+### 🧩 5. **Class PengajuanAkun**
+
+```plantuml
+class PengajuanAkun {
+  +id: int
+  +nip: String
+  +nama: String
+  +no_wa: String
+  +surat: File
+  +status: String
+  +ajukan()
+}
+```
+
+#### 📌 Makna:
+
+* Class ini menyimpan data permintaan akun oleh pegawai baru.
+* Method `ajukan()` dipanggil saat form dikirim.
+
+---
+
+### 🧩 6. **Class ResetPassword**
+
+```plantuml
+class ResetPassword {
+  +id: int
+  +nip: String
+  +status: String
+  +ajukan()
+}
+```
+
+#### 📌 Makna:
+
+* Jika pegawai lupa password, maka sistem akan menyimpan permintaan reset ini.
+* Admin memprosesnya kemudian.
+
+---
+
+## 🔗 Penjelasan Relasi
+
+### ✅ 1. `Pegawai "1" --> "0..*" Reservasi : mengajukan >`
+
+* Artinya: **satu pegawai bisa membuat banyak reservasi**, tapi **boleh juga tidak membuat satupun**
+* Contoh logika: Pak Budi bisa mengajukan 3 reservasi bulan ini, Bu Sari belum mengajukan apapun
+
+---
+
+### ✅ 2. `Reservasi "1" --> "1" Ruangan : untuk >`
+
+* Artinya: **setiap 1 reservasi hanya bisa menggunakan 1 ruangan**
+* Tidak mungkin satu reservasi untuk 2 ruangan
+
+---
+
+### ✅ 3. `Pegawai "1" --> "0..1" PengajuanAkun : mengirim >`
+
+* Artinya: satu pegawai hanya boleh **sekali mengajukan akun**
+* Jika sudah diverifikasi, tidak boleh ajukan lagi
+
+---
+
+### ✅ 4. `Pegawai "1" --> "0..1" ResetPassword : mengajukan >`
+
+* Artinya: satu pegawai bisa melakukan 1 permintaan reset aktif dalam satu waktu
+
+---
+
+### ✅ 5. `Admin "1" --> "0..*" Reservasi : memverifikasi >`
+
+* Admin bisa memverifikasi banyak reservasi
+
+---
+
+### ✅ 6. `Admin "1" --> "0..*" PengajuanAkun : memverifikasi >`
+
+* Admin bisa memproses banyak pengajuan akun
+
+---
+
+## 🧠 Kesimpulan untuk Sidang:
+
+> “Class diagram ini menggambarkan struktur sistem secara menyeluruh, mulai dari entitas utama seperti Pegawai dan Admin, hingga proses yang mereka lakukan seperti reservasi, pengajuan akun, dan pengelolaan data. Relasi antarkelas menunjukkan hubungan logis antar objek dalam sistem yang mencerminkan kebutuhan fungsional dari aplikasi reservasi ruang rapat ini.”
+
+---
+
+Kalau Anda mau, saya bisa bantu buatkan versi narasi class diagram ini dalam format laporan juga ✍️
+Siap lanjut ke bagian selanjutnya?

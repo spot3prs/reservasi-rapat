@@ -121,6 +121,16 @@
         background: #e9ecef;
         transform: translateY(-1px);
     }
+    .alert {
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    .alert-danger {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+    }
 </style>
 {% endblock %}
 
@@ -132,6 +142,9 @@
                 <h2><i class="fas fa-calendar-plus"></i> Ajukan Reservasi Ruangan</h2>
             </div>
             <div class="card-body">
+                <!-- Tambahkan di bagian atas form -->
+                <div id="alertContainer"></div>
+
                 <form method="POST" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="ruangan"><i class="fas fa-door-open"></i> Ruangan</label>
@@ -182,4 +195,61 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const ruanganSelect = document.getElementById('ruangan');
+    const tanggalInput = document.getElementById('tanggal');
+    const waktuMulaiInput = document.getElementById('waktu_mulai');
+    const waktuSelesaiInput = document.getElementById('waktu_selesai');
+    const submitButton = document.querySelector('button[type="submit"]');
+    const alertContainer = document.getElementById('alertContainer');
+
+    // Fungsi untuk cek ketersediaan
+    async function checkAvailability() {
+        const ruangan = ruanganSelect.value;
+        const tanggal = tanggalInput.value;
+        const waktuMulai = waktuMulaiInput.value;
+        const waktuSelesai = waktuSelesaiInput.value;
+
+        if (!ruangan || !tanggal || !waktuMulai || !waktuSelesai) return;
+
+        const formData = new FormData();
+        formData.append('ruangan', ruangan);
+        formData.append('tanggal', tanggal);
+        formData.append('waktu_mulai', waktuMulai);
+        formData.append('waktu_selesai', waktuSelesai);
+
+        try {
+            const response = await fetch('/check-available', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+
+            // Hapus alert sebelumnya
+            alertContainer.innerHTML = '';
+
+            if (!data.available) {
+                // Tampilkan pesan error
+                alertContainer.innerHTML = `
+                    <div class="alert alert-danger" style="margin-bottom: 20px;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        ${data.message}
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    // Event listeners untuk perubahan input
+    ruanganSelect.addEventListener('change', checkAvailability);
+    tanggalInput.addEventListener('change', checkAvailability);
+    waktuMulaiInput.addEventListener('change', checkAvailability);
+    waktuSelesaiInput.addEventListener('change', checkAvailability);
+});
+</script>
 {% endblock %}

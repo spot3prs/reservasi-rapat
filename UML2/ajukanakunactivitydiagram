@@ -1,0 +1,19 @@
+@startuml
+' === Activity Diagram 1: Ajukan Akun ===
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Pegawai|
+start
+:Klik "Ajukan Akun";
+:Isi form NIP, Nama, No. WA;
+:Upload Surat Pengajuan;
+:Klik tombol "Ajukan Akun";
+
+|Sistem|
+:Validasi data;
+:Simpan data ke database;
+:Tampilkan notifikasi "Pengajuan dikirim";
+stop
+@enduml

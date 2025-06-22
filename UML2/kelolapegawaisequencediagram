@@ -1,0 +1,15 @@
+@startuml
+' === Sequence Diagram: Kelola Pegawai ===
+actor Admin
+participant "Halaman Kelola Pegawai" as PegawaiPage
+participant Sistem
+database Database
+
+Admin -> PegawaiPage : Buka menu pegawai
+PegawaiPage -> Sistem : Ambil daftar pegawai
+Sistem -> Database : Query data pegawai
+Admin -> PegawaiPage : Edit / Hapus pegawai
+PegawaiPage -> Sistem : Lakukan update / delete
+Sistem -> Database : Simpan perubahan
+Sistem -> Admin : Tampilkan notifikasi aksi berhasil
+@enduml

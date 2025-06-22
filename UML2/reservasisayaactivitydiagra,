@@ -1,0 +1,15 @@
+@startuml
+' === Activity Diagram 5: Lihat Reservasi Saya ===
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Pegawai|
+start
+:Klik menu "Reservasi Saya";
+
+|Sistem|
+:Ambil data reservasi dari database;
+:Tampilkan reservasi milik pegawai;
+stop
+@enduml

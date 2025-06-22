@@ -1,0 +1,12 @@
+@startuml
+' === Sequence Diagram: Ajukan Reservasi ===
+actor Pegawai
+participant "Form Reservasi" as ReservasiForm
+participant Sistem
+
+Pegawai -> ReservasiForm : Buka halaman ajukan reservasi
+Pegawai -> ReservasiForm : Isi data lengkap
+Pegawai -> ReservasiForm : Klik tombol "Ajukan Reservasi"
+ReservasiForm -> Sistem : Validasi & simpan data
+Sistem -> Pegawai : Tampilkan notifikasi reservasi dikirim
+@enduml

@@ -1,0 +1,49 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class Pegawai {
+  +id: int
+  +nip: string
+  +password: string
+  +nama: string
+  +no_wa: string
+  +role: enum
+}
+
+class PengajuanAkun {
+  +id: int
+  +nip: string
+  +nama: string
+  +no_wa: string
+  +isi_surat: text
+  +file_surat: string
+  +status: enum
+  +tanggal_pengajuan: datetime
+}
+
+class Reservasi {
+  +id: int
+  +nip: string
+  +ruangan: string
+  +tanggal: date
+  +waktu_mulai: time
+  +waktu_selesai: time
+  +keperluan: text
+  +lampiran: string
+  +status: string
+  +waktu_pengajuan: datetime
+  +notifikasi_dikirim: boolean
+  +notifikasi_terkirim: boolean
+}
+
+class Ruangan {
+  +id: int
+  +nama: string
+  +lokasi: string
+  +kapasitas: int
+}
+
+Pegawai "1" --> "0..*" PengajuanAkun : mengajukan >
+Pegawai "1" --> "0..*" Reservasi : melakukan >
+Reservasi "*" --> "1" Ruangan : memakai >
+@enduml

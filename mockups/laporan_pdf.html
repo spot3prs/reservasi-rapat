@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan PDF - Mockup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            width: 100px;
+            height: 100px;
+            background-color: #ddd;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+        }
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin: 10px 0;
+        }
+        .info-section {
+            margin-bottom: 30px;
+        }
+        .info-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 10px;
+        }
+        .info-label {
+            color: #666;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .signature {
+            margin-top: 50px;
+            text-align: right;
+        }
+        .signature-line {
+            width: 200px;
+            border-top: 1px solid #000;
+            margin: 50px auto 10px;
+        }
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo"></div>
+            <h1 class="title">LAPORAN RESERVASI RUANG RAPAT</h1>
+            <p class="subtitle">Periode: 1 Maret 2024 - 31 Maret 2024</p>
+        </div>
+
+        <div class="info-section">
+            <div class="info-title">Informasi Laporan</div>
+            <div class="info-grid">
+                <div class="info-label">Tanggal Dibuat:</div>
+                <div>1 April 2024</div>
+                <div class="info-label">Dibuat Oleh:</div>
+                <div>Admin Sistem</div>
+                <div class="info-label">Departemen:</div>
+                <div>IT</div>
+            </div>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Tanggal</th>
+                    <th>Ruangan</th>
+                    <th>Pemohon</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>2024-03-01</td>
+                    <td>Ruang Rapat 1</td>
+                    <td>John Doe</td>
+                    <td>Disetujui</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>2024-03-05</td>
+                    <td>Ruang Rapat 2</td>
+                    <td>Jane Smith</td>
+                    <td>Disetujui</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>2024-03-10</td>
+                    <td>Ruang Rapat 3</td>
+                    <td>Bob Johnson</td>
+                    <td>Ditolak</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="info-section">
+            <div class="info-title">Ringkasan</div>
+            <div class="info-grid">
+                <div class="info-label">Total Reservasi:</div>
+                <div>15</div>
+                <div class="info-label">Disetujui:</div>
+                <div>12</div>
+                <div class="info-label">Ditolak:</div>
+                <div>3</div>
+                <div class="info-label">Ruangan Terbanyak:</div>
+                <div>Ruang Rapat 1 (8 kali)</div>
+            </div>
+        </div>
+
+        <div class="signature">
+            <div class="signature-line"></div>
+            <div>Kepala Departemen IT</div>
+        </div>
+
+        <div class="footer">
+            <p>Dokumen ini digenerate secara otomatis oleh sistem</p>
+            <p>© 2024 Sistem Reservasi Rapat. All rights reserved.</p>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary">Download PDF</button>
+            <button class="btn btn-secondary">Print</button>
+        </div>
+    </div>
+</body>
+</html> 

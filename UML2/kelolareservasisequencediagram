@@ -1,0 +1,17 @@
+@startuml
+' === Sequence Diagram: Kelola Reservasi (Admin) ===
+actor Admin
+participant "Halaman Kelola Reservasi" as ReservasiPage
+participant Sistem
+database Database
+participant Pegawai
+
+Admin -> ReservasiPage : Buka halaman kelola reservasi
+ReservasiPage -> Sistem : Ambil daftar reservasi
+Sistem -> Database : Query semua reservasi
+Admin -> ReservasiPage : Setujui / Tolak reservasi
+ReservasiPage -> Sistem : Perbarui status
+Sistem -> Database : Update status reservasi
+Sistem -> Pegawai : Kirim notifikasi status reservasi
+Sistem -> Admin : Tampilkan notifikasi berhasil
+@enduml

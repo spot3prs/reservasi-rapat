@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layout - Mockup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .navbar {
+            background-color: #333;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+        .nav-links a:hover {
+            color: #ddd;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #444;
+            color: white;
+            height: calc(100vh - 60px);
+            position: fixed;
+            padding: 20px;
+        }
+        .menu-item {
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+        .menu-item:hover {
+            background-color: #555;
+        }
+        .main-content {
+            margin-left: 270px;
+            padding: 20px;
+        }
+        .footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            background-color: #666;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Sistem Reservasi Rapat</div>
+        <div class="nav-links">
+            <a href="#">Beranda</a>
+            <a href="#">Bantuan</a>
+            <div class="user-info">
+                <div class="user-avatar">JD</div>
+                <span>John Doe</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="sidebar">
+        <h2>Menu</h2>
+        <div class="menu-item">Dashboard</div>
+        <div class="menu-item">Reservasi</div>
+        <div class="menu-item">Kalender</div>
+        <div class="menu-item">Pegawai</div>
+        <div class="menu-item">Laporan</div>
+        <div class="menu-item">Pengaturan</div>
+        <div class="menu-item">Logout</div>
+    </div>
+
+    <div class="main-content">
+        <h1>Konten Utama</h1>
+        <p>Ini adalah contoh layout dasar yang dapat digunakan untuk semua halaman.</p>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 Sistem Reservasi Rapat. All rights reserved.</p>
+    </footer>
+</body>
+</html> 

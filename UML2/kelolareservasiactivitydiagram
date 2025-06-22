@@ -1,0 +1,22 @@
+@startuml
+' === Activity Diagram 9: Kelola Reservasi (Admin & Pegawai) ===
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Pegawai|
+start
+:Ajukan reservasi via form;
+:Menunggu validasi dari admin;
+
+|Admin|
+:Buka menu Kelola Reservasi;
+:Pilih reservasi dari daftar;
+:Pilih aksi: Setujui / Tolak / Kirim Pengingat / Ekspor;
+
+|Sistem|
+:Lakukan aksi sesuai pilihan;
+:Perbarui status / kirim notifikasi / ekspor data;
+:Tampilkan notifikasi aksi selesai;
+stop
+@enduml

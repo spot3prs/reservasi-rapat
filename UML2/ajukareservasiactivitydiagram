@@ -1,0 +1,18 @@
+@startuml
+' === Activity Diagram 4: Ajukan Reservasi ===
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Pegawai|
+start
+:Buka menu Ajukan Reservasi;
+:Isi form (ruangan, tanggal, waktu, keperluan, lampiran);
+:Klik tombol "Ajukan Reservasi";
+
+|Sistem|
+:Validasi form;
+:Simpan reservasi ke database;
+:Tampilkan notifikasi "Reservasi dikirim";
+stop
+@enduml

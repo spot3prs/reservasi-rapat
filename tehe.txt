@@ -1,0 +1,25 @@
+saya ada revisi dari dosen saya, jadi kita buat ulang use case,activity,sequence,class diagram yaa, berikut deskripsi nya :
+
+Pegawai :
+saat di halaman login, pegawai ada 3 pilihan mau "Login","Ajukan Akun","Lupa Password"
+A. "Login" :halama login membutuhkan NIP dan Password, halaman setelah halaman User login, itu terdapat sebuah home page yang dimana di dalam nya terdapat side bar yang berisi :
+1. Ajukan Reservasi : dimana Pegawai bisa mengajukan reservasi yang dimana nanti akan di validasi admin
+2.  Reservasi Saya : dimana pegawai bisa melihat reservasi Miliknya sendiri (pribadi)
+3.  Kalender Jadwal : Dimana pegawai bisa melihat semua reservasi antar pegawai tervisualisasi menggunakan kalender
+4. profil : di halaman ini pegawai bisa melihat sekilas data diri pegawai di sistem reservasi ini, dan juga pegawai bisa ubah password di halaman ini
+5. Logout : user mengakhiri sesi login
+B.  "Ajukan Akun" ini berada di halaman login  jika uiser ingin mengajukan akun baru untuk menggunakan sistem reservasi ini yang dimana kita membutuhkan NIP, Nama, Nomor WhatsApp, surat pengajuan akun untuk submit dan mengajukan pembuatan akun ke Admin 
+C. "Lupa Password" : ini merupakan halaman untuk Reset Password, halaman ini membutuhkan NIP dan Nomor whatsapp, setelah nya aka di validasi oleh admin
+
+sekarang role admin, di halaman login admin sama saja seperti pegawai dimana terdapat "Login" untuk masuk ke dasbboard admin (membutuhkan NIP dan Password untuk login)
+
+setelah admin login admin masuk halaman dashboard admin dimana admin bisa melihat statistik penggunaaan ruangan dan juga ada side bar berisi sebagai berikut :
+
+1. Kelola Reservasi : di halaman ini Admin bisa mengelola/manajemen pengajuan reservasi dari pegawai dan juga admin bisa ekspor laporan penggunaan ruangan dan juga ada fitur "kirim  pengingat hari ini"
+2. Kelola Pegawai : di halaman ini admin bisa mengelola/melihat pegawai (di tabel nya ada NIP,Nama, Nomor Whatsapp) lalu ada fitur edit pegawai(hanya edit nama sama nomor wa saja) sama juga ada fitur hapus pegawai.
+3. Kelola Pengajuan Akun : di dalam nya terdapat data pegawai yang mengajukan akun, nah dihalaman ini kita bisa menyetujui atau menolak pengajuan akun dari para pegawai yang mengajukan.
+4. kalender jadwal : sama saja seperti role pegawai deskripsi nya
+5. profil : sama saja seperti role pegawai deskripsi nya
+6. logout :sama saja seperti role pegawai deskripsi nya
+
+nah tolong kamu buatkan Use Case diagram, Activity Diagram, Sequence Diagram, dan Class Diagram nya menggunakan format PLANTUML

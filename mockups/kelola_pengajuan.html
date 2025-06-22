@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Pengajuan - Mockup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-approved {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .action-btn {
+            padding: 6px 12px;
+            margin: 0 4px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .approve-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        .reject-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .view-btn {
+            background-color: #17a2b8;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Kelola Pengajuan Reservasi</h1>
+        </div>
+
+        <div class="filters">
+            <select>
+                <option value="">Semua Status</option>
+                <option value="pending">Menunggu</option>
+                <option value="approved">Disetujui</option>
+                <option value="rejected">Ditolak</option>
+            </select>
+            <select>
+                <option value="">Semua Ruangan</option>
+                <option value="1">Ruang Rapat 1</option>
+                <option value="2">Ruang Rapat 2</option>
+                <option value="3">Ruang Rapat 3</option>
+            </select>
+            <input type="date" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Pemohon</th>
+                    <th>Judul</th>
+                    <th>Tanggal</th>
+                    <th>Waktu</th>
+                    <th>Ruangan</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>RES001</td>
+                    <td>John Doe</td>
+                    <td>Rapat Tim Marketing</td>
+                    <td>2024-03-20</td>
+                    <td>09:00 - 11:00</td>
+                    <td>Ruang Rapat 1</td>
+                    <td><span class="status status-pending">Menunggu</span></td>
+                    <td>
+                        <button class="action-btn approve-btn">Setujui</button>
+                        <button class="action-btn reject-btn">Tolak</button>
+                        <button class="action-btn view-btn">Detail</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>RES002</td>
+                    <td>Jane Smith</td>
+                    <td>Presentasi Proyek</td>
+                    <td>2024-03-21</td>
+                    <td>14:00 - 16:00</td>
+                    <td>Ruang Rapat 2</td>
+                    <td><span class="status status-approved">Disetujui</span></td>
+                    <td>
+                        <button class="action-btn view-btn">Detail</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>RES003</td>
+                    <td>Mike Johnson</td>
+                    <td>Meeting Client</td>
+                    <td>2024-03-22</td>
+                    <td>10:00 - 12:00</td>
+                    <td>Ruang Rapat 3</td>
+                    <td><span class="status status-rejected">Ditolak</span></td>
+                    <td>
+                        <button class="action-btn view-btn">Detail</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html> 

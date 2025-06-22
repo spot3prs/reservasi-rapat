@@ -1,0 +1,21 @@
+@startuml
+' === Sequence Diagram: Login (Pegawai/Admin) ===
+actor Pengguna
+participant "Halaman Login" as LoginPage
+participant Sistem
+database Database
+participant "Dashboard" as Dashboard
+
+Pengguna -> LoginPage : Buka halaman login
+Pengguna -> LoginPage : Masukkan NIP & Password
+Pengguna -> LoginPage : Klik tombol login
+LoginPage -> Sistem : Kirim data login
+Sistem -> Database : Cek kredensial pengguna
+alt Data Valid
+  Sistem -> Dashboard : Arahkan sesuai role
+  Dashboard -> Pengguna : Tampilkan halaman home/dashboard
+else Data Tidak Valid
+  Sistem -> LoginPage : Tampilkan pesan error
+  LoginPage -> Pengguna : Tampilkan error login
+end
+@enduml

@@ -1,0 +1,53 @@
+@startuml
+!define table(x) class x << (T,#FFAAAA) >>
+!define primary_key(x) <b>x</b>
+!define foreign_key(x) <u>x</u>
+
+skinparam classAttributeIconSize 0
+
+table(Pegawai) {
+  primary_key(id): INT
+  nip: VARCHAR(18)
+  password: VARCHAR(100)
+  nama: VARCHAR(100)
+  no_wa: VARCHAR(20)
+  role: ENUM('pegawai','admin')
+}
+
+table(PengajuanAkun) {
+  primary_key(id): INT
+  foreign_key(nip): VARCHAR(18)
+  nama: VARCHAR(100)
+  no_wa: VARCHAR(20)
+  isi_surat: TEXT
+  file_surat: VARCHAR(255)
+  status: ENUM('Menunggu','Disetujui','Ditolak')
+  tanggal_pengajuan: DATETIME
+}
+
+table(Reservasi) {
+  primary_key(id): INT
+  foreign_key(nip): VARCHAR(20)
+  ruangan: VARCHAR(100)
+  tanggal: DATE
+  waktu_mulai: TIME
+  waktu_selesai: TIME
+  keperluan: TEXT
+  status: VARCHAR(20)
+  waktu_pengajuan: DATETIME
+  notifikasi_dikirim: BOOLEAN
+  notifikasi_terkirim: BOOLEAN
+  lampiran: VARCHAR(255)
+}
+
+table(Ruangan) {
+  primary_key(id): INT
+  nama: VARCHAR(100)
+  lokasi: VARCHAR(100)
+  kapasitas: INT
+}
+
+Pegawai ||--o{ Reservasi : mengajukan >
+Pegawai ||--o{ PengajuanAkun : mengajukan >
+Ruangan ||--o{ Reservasi : digunakan >
+@enduml

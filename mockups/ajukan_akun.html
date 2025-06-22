@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajukan Akun - Mockup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            margin: 0;
+            color: #333;
+            font-size: 24px;
+        }
+        .header p {
+            color: #666;
+            margin: 10px 0 0;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .login-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        .requirements {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .requirements h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .requirements ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .requirements li {
+            color: #666;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Ajukan Akun Baru</h1>
+            <p>Silakan lengkapi form di bawah ini untuk mengajukan akun baru</p>
+        </div>
+
+        <div class="requirements">
+            <h3>Persyaratan:</h3>
+            <ul>
+                <li>Harus memiliki NIP yang valid</li>
+                <li>Email harus menggunakan domain perusahaan</li>
+                <li>Password minimal 8 karakter</li>
+                <li>Harus melampirkan foto KTP</li>
+            </ul>
+        </div>
+
+        <form>
+            <div class="form-group">
+                <label for="nip">NIP</label>
+                <input type="text" id="nip" placeholder="Masukkan NIP" required>
+            </div>
+
+            <div class="form-group">
+                <label for="nama">Nama Lengkap</label>
+                <input type="text" id="nama" placeholder="Masukkan nama lengkap" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Masukkan email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="jabatan">Jabatan</label>
+                <select id="jabatan" required>
+                    <option value="">Pilih jabatan...</option>
+                    <option value="staff">Staff</option>
+                    <option value="supervisor">Supervisor</option>
+                    <option value="manager">Manager</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Masukkan password" required>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm-password">Konfirmasi Password</label>
+                <input type="password" id="confirm-password" placeholder="Konfirmasi password" required>
+            </div>
+
+            <div class="form-group">
+                <label for="ktp">Foto KTP</label>
+                <input type="file" id="ktp" accept="image/*" required>
+            </div>
+
+            <button type="submit" class="btn">Ajukan Akun</button>
+        </form>
+
+        <div class="login-link">
+            <p>Sudah punya akun? <a href="#">Login di sini</a></p>
+        </div>
+    </div>
+</body>
+</html> 

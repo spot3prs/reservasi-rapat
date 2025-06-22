@@ -1,0 +1,13 @@
+@startuml
+' === Sequence Diagram: Lihat Kalender Jadwal ===
+actor Pengguna
+participant "Halaman Kalender" as KalenderPage
+participant Sistem
+database Database
+
+Pengguna -> KalenderPage : Buka menu kalender
+KalenderPage -> Sistem : Minta data reservasi
+Sistem -> Database : Ambil reservasi disetujui
+Sistem -> KalenderPage : Kirim data jadwal
+KalenderPage -> Pengguna : Tampilkan kalender terisi
+@enduml

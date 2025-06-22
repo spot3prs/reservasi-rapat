@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Reservasi - Mockup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .search-box {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 200px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.9em;
+        }
+        .status-pending {
+            background-color: #ffc107;
+            color: #000;
+        }
+        .status-approved {
+            background-color: #28a745;
+            color: white;
+        }
+        .status-rejected {
+            background-color: #dc3545;
+            color: white;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 20px;
+        }
+        .page-item {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .page-item.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Daftar Reservasi</h2>
+            <button class="btn btn-primary">+ Tambah Reservasi</button>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label>Status:</label>
+                <select class="search-box">
+                    <option value="">Semua</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Disetujui</option>
+                    <option value="rejected">Ditolak</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Tanggal:</label>
+                <input type="date" class="search-box">
+            </div>
+            <div class="filter-group">
+                <label>Ruangan:</label>
+                <select class="search-box">
+                    <option value="">Semua</option>
+                    <option value="1">Ruang Rapat 1</option>
+                    <option value="2">Ruang Rapat 2</option>
+                    <option value="3">Ruang Rapat 3</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <input type="text" class="search-box" placeholder="Cari...">
+            </div>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Tanggal</th>
+                    <th>Waktu</th>
+                    <th>Ruangan</th>
+                    <th>Pemohon</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>2024-03-20</td>
+                    <td>09:00 - 10:00</td>
+                    <td>Ruang Rapat 1</td>
+                    <td>John Doe</td>
+                    <td><span class="status status-approved">Disetujui</span></td>
+                    <td>
+                        <button class="btn btn-secondary">Detail</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>2024-03-20</td>
+                    <td>13:00 - 14:00</td>
+                    <td>Ruang Rapat 2</td>
+                    <td>Jane Smith</td>
+                    <td><span class="status status-pending">Pending</span></td>
+                    <td>
+                        <button class="btn btn-secondary">Detail</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>2024-03-21</td>
+                    <td>10:00 - 11:00</td>
+                    <td>Ruang Rapat 3</td>
+                    <td>Bob Johnson</td>
+                    <td><span class="status status-rejected">Ditolak</span></td>
+                    <td>
+                        <button class="btn btn-secondary">Detail</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="pagination">
+            <div class="page-item">«</div>
+            <div class="page-item active">1</div>
+            <div class="page-item">2</div>
+            <div class="page-item">3</div>
+            <div class="page-item">»</div>
+        </div>
+    </div>
+</body>
+</html> 

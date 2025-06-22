@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Box Testing - Sistem Reservasi Ruangan Rapat</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f1c40f;
+            --light-bg: #f8f9fa;
+            --dark-bg: #2c3e50;
+            --border-color: #dee2e6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            text-align: center;
+            font-size: 2rem;
+        }
+
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+
+        .subsection {
+            margin-bottom: 2rem;
+        }
+
+        .subsection h3 {
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--light-bg);
+        }
+
+        tr:hover {
+            background-color: #f0f0f0;
+        }
+
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background-color: var(--warning-color);
+            color: #856404;
+        }
+
+        .status-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .status-error {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .nav-tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab:hover {
+            background-color: var(--light-bg);
+        }
+
+        .nav-tab.active {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .search-bar button {
+            padding: 0.5rem 1rem;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .search-bar button:hover {
+            background-color: #2980b9;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Black Box Testing - Sistem Reservasi Ruangan Rapat</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" placeholder="Cari test case...">
+            <button>Search</button>
+        </div>
+
+        <div class="nav-tabs">
+            <div class="nav-tab active">Semua</div>
+            <div class="nav-tab">Autentikasi</div>
+            <div class="nav-tab">Reservasi</div>
+            <div class="nav-tab">Ruangan</div>
+            <div class="nav-tab">Laporan</div>
+            <div class="nav-tab">UI/UX</div>
+        </div>
+
+        <div class="section">
+            <h2>1. Autentikasi dan Manajemen Akun</h2>
+            
+            <div class="subsection">
+                <h3>1.1 Login</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Test Case</th>
+                            <th>Input</th>
+                            <th>Expected Output</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TC-1.1.1</td>
+                            <td>Login dengan kredensial valid</td>
+                            <td>Username: admin, Password: admin123</td>
+                            <td>Berhasil login dan redirect ke dashboard admin</td>
+                            <td><span class="status status-pending">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>TC-1.1.2</td>
+                            <td>Login dengan kredensial invalid</td>
+                            <td>Username: admin, Password: wrongpass</td>
+                            <td>Pesan error "Username atau password salah"</td>
+                            <td><span class="status status-pending">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>TC-1.1.3</td>
+                            <td>Login dengan field kosong</td>
+                            <td>Username: "", Password: ""</td>
+                            <td>Pesan error "Username dan password harus diisi"</td>
+                            <td><span class="status status-pending">Pending</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="subsection">
+                <h3>1.2 Pengajuan Akun</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Test Case</th>
+                            <th>Input</th>
+                            <th>Expected Output</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TC-1.2.1</td>
+                            <td>Pengajuan akun dengan data valid</td>
+                            <td>Nama: John Doe, Email: john@example.com, Jabatan: Staff IT</td>
+                            <td>Berhasil mengajukan akun, status pending</td>
+                            <td><span class="status status-pending">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>TC-1.2.2</td>
+                            <td>Pengajuan akun dengan email sudah terdaftar</td>
+                            <td>Nama: Jane Doe, Email: admin@example.com, Jabatan: Staff HR</td>
+                            <td>Pesan error "Email sudah terdaftar"</td>
+                            <td><span class="status status-pending">Pending</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>2. Manajemen Reservasi</h2>
+            
+            <div class="subsection">
+                <h3>2.1 Pengajuan Reservasi</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Test Case</th>
+                            <th>Input</th>
+                            <th>Expected Output</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TC-2.1.1</td>
+                            <td>Pengajuan reservasi dengan data valid</td>
+                            <td>Ruangan: Meeting A, Tanggal: 20/03/2024, Waktu: 09:00-11:00</td>
+                            <td>Berhasil mengajukan reservasi</td>
+                            <td><span class="status status-pending">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>TC-2.1.2</td>
+                            <td>Pengajuan reservasi dengan ruangan sudah dipesan</td>
+                            <td>Ruangan: Meeting A, Tanggal: 20/03/2024, Waktu: 09:00-11:00</td>
+                            <td>Pesan error "Ruangan sudah dipesan pada waktu tersebut"</td>
+                            <td><span class="status status-pending">Pending</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>3. Manajemen Ruangan</h2>
+            
+            <div class="subsection">
+                <h3>3.1 Tambah Ruangan</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Test Case</th>
+                            <th>Input</th>
+                            <th>Expected Output</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TC-3.1.1</td>
+                            <td>Menambah ruangan dengan data valid</td>
+                            <td>Nama: Meeting C, Kapasitas: 20</td>
+                            <td>Berhasil menambah ruangan</td>
+                            <td><span class="status status-pending">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>TC-3.1.2</td>
+                            <td>Menambah ruangan dengan nama sudah ada</td>
+                            <td>Nama: Meeting A, Kapasitas: 15</td>
+                            <td>Pesan error "Nama ruangan sudah ada"</td>
+                            <td><span class="status status-pending">Pending</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>4. Laporan</h2>
+            
+            <div class="subsection">
+                <h3>4.1 Generate Laporan PDF</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Test Case</th>
+                            <th>Input</th>
+                            <th>Expected Output</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TC-4.1.1</td>
+                            <td>Generate laporan dengan filter tanggal</td>
+                            <td>Tanggal awal: 01/03/2024, Tanggal akhir: 31/03/2024</td>
+                            <td>File PDF berhasil diunduh</td>
+                            <td><span class="status status-pending">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>TC-4.1.2</td>
+                            <td>Generate laporan tanpa filter</td>
+                            <td>Klik "Generate Laporan"</td>
+                            <td>File PDF berhasil diunduh dengan semua data</td>
+                            <td><span class="status status-pending">Pending</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>5. Navigasi dan UI</h2>
+            
+            <div class="subsection">
+                <h3>5.1 Navigasi Menu</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Test Case</th>
+                            <th>Input</th>
+                            <th>Expected Output</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TC-5.1.1</td>
+                            <td>Navigasi ke dashboard admin</td>
+                            <td>Klik menu "Dashboard"</td>
+                            <td>Berhasil menampilkan dashboard admin</td>
+                            <td><span class="status status-pending">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>TC-5.1.2</td>
+                            <td>Navigasi ke dashboard pegawai</td>
+                            <td>Klik menu "Dashboard"</td>
+                            <td>Berhasil menampilkan dashboard pegawai</td>
+                            <td><span class="status status-pending">Pending</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Search functionality
+        const searchInput = document.querySelector('.search-bar input');
+        const searchButton = document.querySelector('.search-bar button');
+        const tables = document.querySelectorAll('table');
+
+        function searchTestCases() {
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            tables.forEach(table => {
+                const rows = table.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                });
+            });
+        }
+
+        searchButton.addEventListener('click', searchTestCases);
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                searchTestCases();
+            }
+        });
+
+        // Tab navigation
+        const tabs = document.querySelectorAll('.nav-tab');
+        const sections = document.querySelectorAll('.section');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                tab.classList.add('active');
+
+                const filter = tab.textContent.toLowerCase();
+                
+                sections.forEach(section => {
+                    if (filter === 'semua') {
+                        section.style.display = '';
+                    } else {
+                        const sectionTitle = section.querySelector('h2').textContent.toLowerCase();
+                        section.style.display = sectionTitle.includes(filter) ? '' : 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

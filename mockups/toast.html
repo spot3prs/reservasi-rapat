@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toast Notification - Mockup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .toast {
+            background: white;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toast-success {
+            border-left: 4px solid #28a745;
+        }
+        .toast-error {
+            border-left: 4px solid #dc3545;
+        }
+        .toast-warning {
+            border-left: 4px solid #ffc107;
+        }
+        .toast-info {
+            border-left: 4px solid #17a2b8;
+        }
+        .toast-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        .toast-success .toast-icon {
+            background-color: #28a745;
+            color: white;
+        }
+        .toast-error .toast-icon {
+            background-color: #dc3545;
+            color: white;
+        }
+        .toast-warning .toast-icon {
+            background-color: #ffc107;
+            color: #000;
+        }
+        .toast-info .toast-icon {
+            background-color: #17a2b8;
+            color: white;
+        }
+        .toast-content {
+            flex: 1;
+        }
+        .toast-title {
+            font-weight: bold;
+            margin: 0 0 5px 0;
+        }
+        .toast-message {
+            margin: 0;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .toast-close {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Contoh Toast Notification</h2>
+        
+        <div class="toast toast-success">
+            <div class="toast-icon">✓</div>
+            <div class="toast-content">
+                <div class="toast-title">Berhasil!</div>
+                <div class="toast-message">Data berhasil disimpan</div>
+            </div>
+            <button class="toast-close">×</button>
+        </div>
+
+        <div class="toast toast-error">
+            <div class="toast-icon">!</div>
+            <div class="toast-content">
+                <div class="toast-title">Error!</div>
+                <div class="toast-message">Terjadi kesalahan saat menyimpan data</div>
+            </div>
+            <button class="toast-close">×</button>
+        </div>
+
+        <div class="toast toast-warning">
+            <div class="toast-icon">!</div>
+            <div class="toast-content">
+                <div class="toast-title">Peringatan!</div>
+                <div class="toast-message">Beberapa data belum lengkap</div>
+            </div>
+            <button class="toast-close">×</button>
+        </div>
+
+        <div class="toast toast-info">
+            <div class="toast-icon">i</div>
+            <div class="toast-content">
+                <div class="toast-title">Informasi</div>
+                <div class="toast-message">Sistem akan diupdate dalam 5 menit</div>
+            </div>
+            <button class="toast-close">×</button>
+        </div>
+    </div>
+</body>
+</html> 

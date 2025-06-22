@@ -74,6 +74,33 @@
         color: #c82333;
         border: 1px solid #f5c6cb;
     }
+    .input-error {
+        border-color: #dc3545 !important;
+    }
+    .error-message {
+        color: #dc3545;
+        font-size: 0.85rem;
+        margin-top: 4px;
+        display: none;
+    }
+    .error-message.show {
+        display: block;
+    }
+    .input-wrapper {
+        position: relative;
+        margin-bottom: 16px;
+    }
+    .input-wrapper i {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #dc3545;
+        display: none;
+    }
+    .input-wrapper.error i {
+        display: block;
+    }
     </style>
 </head>
 <body>
@@ -101,12 +128,26 @@
                     {% endif %}
                 {% endwith %}
 
-                <form method="POST">
-                    <label for="nip">NIP</label>
-                    <input type="text" name="nip" id="nip" placeholder="Masukkan NIP Anda" required>
+                <form method="POST" id="loginForm" novalidate>
+                    <div class="input-wrapper">
+                        <label for="nip">NIP</label>
+                        <input type="text" 
+                               name="nip" 
+                               id="nip" 
+                               placeholder="Masukkan NIP Anda (18 digit)" 
+                               pattern="[0-9]{18}"
+                               maxlength="18"
+                               required>
+                        <i class="fas fa-exclamation-circle"></i>
+                        <div class="error-message" id="nipError">
+                            NIP harus terdiri dari 18 digit angka
+                        </div>
+                    </div>
 
-                    <label for="password">Password</label>
-                    <input type="password" name="password" id="password" placeholder="Masukkan password Anda" required>
+                    <div class="input-wrapper">
+                        <label for="password">Password</label>
+                        <input type="password" name="password" id="password" placeholder="Masukkan password Anda" required>
+                    </div>
 
                     <button type="submit">Masuk</button>
                 </form>
@@ -180,5 +221,60 @@
             </p>
         </div>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('loginForm');
+            const nipInput = document.getElementById('nip');
+            const nipError = document.getElementById('nipError');
+            const nipWrapper = nipInput.parentElement;
+
+            // Validasi saat input berubah
+            nipInput.addEventListener('input', function() {
+                validateNIP();
+            });
+
+            // Validasi saat form disubmit
+            form.addEventListener('submit', function(e) {
+                if (!validateNIP()) {
+                    e.preventDefault();
+                }
+            });
+
+            function validateNIP() {
+                const nip = nipInput.value.trim();
+                const isValid = /^[0-9]{18}$/.test(nip);
+
+                if (!isValid) {
+                    nipWrapper.classList.add('error');
+                    nipInput.classList.add('input-error');
+                    nipError.classList.add('show');
+                    
+                    if (nip.length > 0) {
+                        if (nip.length !== 18) {
+                            nipError.textContent = 'NIP harus terdiri dari 18 digit angka';
+                        } else if (!/^[0-9]+$/.test(nip)) {
+                            nipError.textContent = 'NIP hanya boleh berisi angka';
+                        }
+                    } else {
+                        nipError.textContent = 'NIP harus diisi';
+                    }
+                } else {
+                    nipWrapper.classList.remove('error');
+                    nipInput.classList.remove('input-error');
+                    nipError.classList.remove('show');
+                }
+
+                return isValid;
+            }
+
+            // Hanya mengizinkan input angka
+            nipInput.addEventListener('keypress', function(e) {
+                if (!/[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
 </body>
 </html>

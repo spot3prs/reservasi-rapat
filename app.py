@@ -189,6 +189,27 @@ def ajukan_reservasi():
             waktu_mulai = request.form['waktu_mulai']
             waktu_selesai = request.form['waktu_selesai']
             keperluan = request.form['keperluan']
+            
+            # Handle file upload
+            lampiran = None
+            if 'lampiran' in request.files:
+                file = request.files['lampiran']
+                if file and file.filename != '':
+                    # Pastikan direktori uploads ada
+                    upload_dir = os.path.join('static', 'uploads')
+                    if not os.path.exists(upload_dir):
+                        os.makedirs(upload_dir)
+                    
+                    # Generate nama file yang aman
+                    filename = secure_filename(file.filename)
+                    # Tambahkan timestamp untuk menghindari nama file yang sama
+                    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                    filename = f"{timestamp}_{filename}"
+                    
+                    # Simpan file
+                    file_path = os.path.join(upload_dir, filename)
+                    file.save(file_path)
+                    lampiran = filename
 
             # Validasi input
             if not all([nip, ruangan, tanggal, waktu_mulai, waktu_selesai, keperluan]):
@@ -218,9 +239,9 @@ def ajukan_reservasi():
 
             # Simpan data ke database
             cursor.execute("""
-                INSERT INTO reservasi (nip, ruangan, tanggal, waktu_mulai, waktu_selesai, keperluan, status, waktu_pengajuan)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, NOW())
-            """, (nip, ruangan, tanggal, waktu_mulai, waktu_selesai, keperluan, 'Menunggu'))
+                INSERT INTO reservasi (nip, ruangan, tanggal, waktu_mulai, waktu_selesai, keperluan, status, waktu_pengajuan, lampiran)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, NOW(), %s)
+            """, (nip, ruangan, tanggal, waktu_mulai, waktu_selesai, keperluan, 'Menunggu', lampiran))
             conn.commit()
 
             # Ambil data pemesan untuk notifikasi
@@ -469,7 +490,7 @@ def kelola_reservasi():
     base_query = """
         SELECT r.id, p.nama, r.ruangan as nama_ruangan, 
                r.tanggal, r.waktu_mulai, r.waktu_selesai, 
-               r.keperluan as kegiatan, r.status
+               r.keperluan as kegiatan, r.status, r.lampiran
         FROM reservasi r
         JOIN pegawai p ON r.nip = p.nip
     """

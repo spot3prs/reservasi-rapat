@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOME - Mockup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #333;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            padding: 20px;
+        }
+        .main-content {
+            margin-left: 270px;
+            padding: 20px;
+        }
+        .menu-item {
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+        .menu-item:hover {
+            background-color: #444;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .upcoming-meetings {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .meeting-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .meeting-item:last-child {
+            border-bottom: none;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Menu Pegawai</h2>
+        <div class="menu-item">HOME</div>
+        <div class="menu-item">Ajukan Reservasi</div>
+        <div class="menu-item">Daftar Reservasi</div>
+        <div class="menu-item">Kalender</div>
+        <div class="menu-item">Profil</div>
+        <div class="menu-item">Logout</div>
+    </div>
+
+    <div class="main-content">
+        <h1>Dashboard</h1>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Reservasi Aktif</h3>
+                <p>3</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Reservasi</h3>
+                <p>12</p>
+            </div>
+            <div class="stat-card">
+                <h3>Ruangan Tersedia</h3>
+                <p>5</p>
+            </div>
+        </div>
+
+        <div class="upcoming-meetings">
+            <h2>Rapat Mendatang</h2>
+            <div class="meeting-item">
+                <h3>Rapat Tim IT</h3>
+                <p>Tanggal: 20 Mar 2024</p>
+                <p>Waktu: 09:00 - 11:00</p>
+                <p>Ruangan: Ruang Rapat 1</p>
+            </div>
+            <div class="meeting-item">
+                <h3>Presentasi Proyek</h3>
+                <p>Tanggal: 21 Mar 2024</p>
+                <p>Waktu: 14:00 - 16:00</p>
+                <p>Ruangan: Ruang Rapat 2</p>
+            </div>
+            <div class="meeting-item">
+                <h3>Meeting Client</h3>
+                <p>Tanggal: 22 Mar 2024</p>
+                <p>Waktu: 10:00 - 12:00</p>
+                <p>Ruangan: Ruang Rapat 3</p>
+            </div>
+        </div>
+
+        <a href="#" class="btn">Ajukan Reservasi Baru</a>
+    </div>
+</body>
+</html> 

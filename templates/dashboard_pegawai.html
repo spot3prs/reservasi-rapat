@@ -34,11 +34,12 @@
             ] %}
 
             {% for room in rooms %}
-            <div class="room-card" data-room="{{ room.nama }}">
+            <div class="room-card" data-room="{{ room.nama }}" onclick="showRoomDetails('{{ room.nama }}')">
                 <h4><i class="fas fa-door-open"></i> {{ room.nama }}</h4>
                 <p><i class="fas fa-map-marker-alt"></i> {{ room.lokasi }}</p>
                 <p><i class="fas fa-users"></i> Kapasitas: {{ room.kapasitas }} orang</p>
                 <span class="room-status" id="status-{{ room.nama|replace(' ', '-')|lower }}">Memeriksa ketersediaan...</span>
+                <p class="click-info"><i class="fas fa-info-circle"></i> Klik untuk info lebih lanjut</p>
             </div>
             {% endfor %}
 
@@ -46,7 +47,133 @@
     </div>
 </div>
 
+<!-- Modal untuk menampilkan detail reservasi -->
+<div id="roomDetailsModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3 id="modalRoomName"></h3>
+        <div class="reservation-table-container">
+            <table id="reservationTable" class="reservation-table">
+                <thead>
+                    <tr>
+                        <th>Nama Pemesan</th>
+                        <th>Tanggal</th>
+                        <th>Waktu Mulai</th>
+                        <th>Waktu Selesai</th>
+                        <th>Keperluan</th>
+                    </tr>
+                </thead>
+                <tbody id="reservationTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 <script>
+// Fungsi untuk menampilkan detail ruangan
+function showRoomDetails(roomName) {
+    const modal = document.getElementById('roomDetailsModal');
+    const modalRoomName = document.getElementById('modalRoomName');
+    const tableBody = document.getElementById('reservationTableBody');
+    
+    modalRoomName.textContent = roomName;
+    modal.style.display = "block";
+
+    // Ambil data reservasi untuk 3 hari ke depan
+    const now = new Date();
+    const currentDate = now.toISOString().split('T')[0];
+    
+    // Hitung tanggal 3 hari ke depan
+    const endDate = new Date(now);
+    endDate.setDate(now.getDate() + 3);
+    const endDateStr = endDate.toISOString().split('T')[0];
+
+    // Buat array untuk menyimpan semua data reservasi
+    let allReservations = [];
+    let promises = [];
+
+    // Ambil data untuk setiap hari
+    for (let d = new Date(now); d <= endDate; d.setDate(d.getDate() + 1)) {
+        const dateStr = d.toISOString().split('T')[0];
+        promises.push(
+            fetch(`/get-reservations-by-date?date=${dateStr}`)
+                .then(response => response.json())
+                .then(reservations => {
+                    // Filter reservasi untuk ruangan yang dipilih
+                    const roomReservations = reservations.filter(r => r.ruangan === roomName);
+                    allReservations = allReservations.concat(roomReservations);
+                })
+        );
+    }
+
+    // Tunggu semua request selesai
+    Promise.all(promises)
+        .then(() => {
+            // Kosongkan tabel
+            tableBody.innerHTML = '';
+            
+            if (allReservations.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="5" class="no-data">Tidak ada reservasi untuk 3 hari ke depan</td>';
+                tableBody.appendChild(row);
+            } else {
+                // Urutkan reservasi berdasarkan tanggal dan waktu
+                allReservations.sort((a, b) => {
+                    if (a.tanggal === b.tanggal) {
+                        return a.waktu_mulai.localeCompare(b.waktu_mulai);
+                    }
+                    return a.tanggal.localeCompare(b.tanggal);
+                });
+
+                // Tambahkan header untuk setiap hari
+                let currentDate = '';
+                allReservations.forEach(reservation => {
+                    if (reservation.tanggal !== currentDate) {
+                        currentDate = reservation.tanggal;
+                        const dateHeader = document.createElement('tr');
+                        dateHeader.className = 'date-header';
+                        dateHeader.innerHTML = `<td colspan="5" class="date-header-cell">${formatDate(currentDate)}</td>`;
+                        tableBody.appendChild(dateHeader);
+                    }
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${reservation.nama}</td>
+                        <td>${formatDate(reservation.tanggal)}</td>
+                        <td>${reservation.waktu_mulai}</td>
+                        <td>${reservation.waktu_selesai}</td>
+                        <td>${reservation.keperluan}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching reservations:', error);
+            tableBody.innerHTML = '<tr><td colspan="5" class="error">Error loading data</td></tr>';
+        });
+}
+
+// Fungsi untuk memformat tanggal
+function formatDate(dateStr) {
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateStr).toLocaleDateString('id-ID', options);
+}
+
+// Fungsi untuk menutup modal
+document.querySelector('.close').onclick = function() {
+    document.getElementById('roomDetailsModal').style.display = "none";
+}
+
+// Tutup modal jika user klik di luar modal
+window.onclick = function(event) {
+    const modal = document.getElementById('roomDetailsModal');
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
 function updateRoomStatus() {
     const now = new Date();
     const currentTime = now.toLocaleTimeString('en-US', { hour12: false });
@@ -110,6 +237,111 @@ setInterval(updateRoomStatus, 60000);
 .status-occupied {
     background-color: #f8d7da;
     color: #721c24;
+}
+
+.room-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.room-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.click-info {
+    margin-top: 10px;
+    color: #666;
+    font-style: italic;
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 900px;
+    border-radius: 8px;
+    position: relative;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: black;
+}
+
+.reservation-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.reservation-table th,
+.reservation-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+.reservation-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+.reservation-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.reservation-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+.no-data {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}
+
+.error {
+    text-align: center;
+    color: #dc3545;
+}
+
+/* Tambahan style untuk header tanggal */
+.date-header {
+    background-color: #e9ecef;
+}
+
+.date-header-cell {
+    font-weight: bold;
+    padding: 10px;
+    color: #495057;
+    text-align: center;
+    font-size: 1.1em;
+}
+
+.reservation-table tr:not(.date-header):hover {
+    background-color: #f5f5f5;
 }
 </style>
 {% endblock %}

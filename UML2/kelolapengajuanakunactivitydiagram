@@ -1,0 +1,22 @@
+@startuml
+' === Activity Diagram 11: Kelola Pengajuan Akun (Admin & Pegawai) ===
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Pegawai|
+start
+:Mengisi formulir pengajuan akun;
+:Kirim permintaan ke sistem;
+
+|Admin|
+:Buka menu Pengajuan Akun;
+:Lihat daftar pengajuan;
+:Pilih pengajuan lalu klik Setujui / Tolak;
+
+|Sistem|
+:Simpan pengajuan dari pegawai;
+:Update status pengajuan sesuai aksi admin;
+:Tampilkan notifikasi ke pegawai;
+stop
+@enduml

@@ -1,0 +1,17 @@
+@startuml
+' === Activity Diagram 10: Kelola Pegawai (Admin) ===
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Admin|
+start
+:Buka menu Kelola Pegawai;
+:Pilih pegawai dari tabel;
+:Pilih aksi: Edit atau Hapus;
+
+|Sistem|
+:Lakukan update atau hapus data pegawai;
+:Tampilkan notifikasi berhasil;
+stop
+@enduml

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Pengajuan Akun - Mockup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .search-bar input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            flex-grow: 1;
+        }
+        .search-bar button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .account-list {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .account-list th, .account-list td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .account-list th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-approved {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .action-buttons button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .approve-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        .reject-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .view-btn {
+            background-color: #17a2b8;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Kelola Pengajuan Akun</h1>
+        </div>
+
+        <div class="search-bar">
+            <input type="text" placeholder="Cari pengajuan akun...">
+            <button>Filter</button>
+        </div>
+
+        <table class="account-list">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nama</th>
+                    <th>Email</th>
+                    <th>Jabatan</th>
+                    <th>Tanggal Pengajuan</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>#001</td>
+                    <td>John Doe</td>
+                    <td>john.doe@example.com</td>
+                    <td>Staff IT</td>
+                    <td>19 Mar 2024</td>
+                    <td><span class="status status-pending">Pending</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="approve-btn">Setuju</button>
+                            <button class="reject-btn">Tolak</button>
+                            <button class="view-btn">Lihat</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>#002</td>
+                    <td>Jane Smith</td>
+                    <td>jane.smith@example.com</td>
+                    <td>Staff HR</td>
+                    <td>18 Mar 2024</td>
+                    <td><span class="status status-approved">Disetujui</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="view-btn">Lihat</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>#003</td>
+                    <td>Mike Johnson</td>
+                    <td>mike.johnson@example.com</td>
+                    <td>Staff Finance</td>
+                    <td>17 Mar 2024</td>
+                    <td><span class="status status-rejected">Ditolak</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="view-btn">Lihat</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html> 

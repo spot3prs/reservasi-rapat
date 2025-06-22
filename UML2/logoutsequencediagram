@@ -1,0 +1,9 @@
+@startuml
+' === Sequence Diagram: Logout ===
+actor Pengguna
+participant Sistem
+
+Pengguna -> Sistem : Klik tombol logout
+Sistem -> Sistem : Hapus sesi login
+Sistem -> Pengguna : Redirect ke halaman login
+@enduml

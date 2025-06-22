@@ -1,0 +1,17 @@
+@startuml
+' === Sequence Diagram: Kelola Pengajuan Akun (Admin) ===
+actor Admin
+participant "Halaman Pengajuan Akun" as AkunPage
+participant Sistem
+database Database
+participant Pegawai
+
+Admin -> AkunPage : Akses daftar pengajuan akun
+AkunPage -> Sistem : Ambil data pengajuan
+Sistem -> Database : Query data pengajuan akun
+Admin -> AkunPage : Setujui / Tolak pengajuan
+AkunPage -> Sistem : Update status pengajuan
+Sistem -> Database : Simpan status baru
+Sistem -> Pegawai : Kirim notifikasi pengajuan
+Sistem -> Admin : Tampilkan notifikasi berhasil
+@enduml

@@ -1,0 +1,15 @@
+@startuml
+' === Activity Diagram 8: Logout ===
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Pengguna|
+start
+:Klik menu "Logout";
+
+|Sistem|
+:Hapus sesi login;
+:Arahkan ke halaman login;
+stop
+@enduml

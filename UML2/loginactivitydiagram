@@ -1,0 +1,24 @@
+@startuml
+' === Activity Diagram 3: Login ===
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Pengguna|
+start
+:Masukkan NIP dan Password;
+:Klik tombol Login;
+
+|Sistem|
+:Validasi kredensial;
+if (Valid?) then (Ya)
+  :Arahkan ke Dashboard atau Home;
+  stop
+else (Tidak)
+  :Tampilkan pesan error;
+
+  |Pengguna|
+  :Melihat pesan error;
+  stop
+endif
+@enduml

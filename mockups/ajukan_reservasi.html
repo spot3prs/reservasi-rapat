@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajukan Reservasi - Mockup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .row {
+            display: flex;
+            gap: 20px;
+        }
+        .col {
+            flex: 1;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ajukan Reservasi Ruang Rapat</h1>
+        
+        <form>
+            <div class="form-group">
+                <label for="judul">Judul Rapat</label>
+                <input type="text" id="judul" placeholder="Masukkan judul rapat">
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="tanggal">Tanggal</label>
+                        <input type="date" id="tanggal">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="waktu">Waktu Mulai</label>
+                        <input type="time" id="waktu">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="durasi">Durasi (jam)</label>
+                        <input type="number" id="durasi" min="1" max="8">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="ruangan">Pilih Ruangan</label>
+                <select id="ruangan">
+                    <option value="">Pilih ruangan...</option>
+                    <option value="1">Ruang Rapat 1</option>
+                    <option value="2">Ruang Rapat 2</option>
+                    <option value="3">Ruang Rapat 3</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="peserta">Jumlah Peserta</label>
+                <input type="number" id="peserta" min="1">
+            </div>
+
+            <div class="form-group">
+                <label for="keterangan">Keterangan</label>
+                <textarea id="keterangan" rows="4" placeholder="Tambahkan keterangan jika diperlukan"></textarea>
+            </div>
+
+            <button type="submit">Ajukan Reservasi</button>
+        </form>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,15 @@
+@startuml
+' === Activity Diagram 6: Lihat Kalender Jadwal (Pegawai & Admin) ===
+skinparam activityBorderThickness 1
+skinparam activityBackgroundColor #FDFDFD
+skinparam shadowing false
+
+|Pengguna|
+start
+:Klik menu "Kalender Jadwal";
+
+|Sistem|
+:Ambil data reservasi yang disetujui;
+:Tampilkan dalam bentuk kalender interaktif;
+stop
+@enduml

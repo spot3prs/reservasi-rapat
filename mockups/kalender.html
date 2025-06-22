@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalender Reservasi - Mockup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background-color: #ddd;
+        }
+        .calendar-day {
+            background: white;
+            padding: 10px;
+            min-height: 100px;
+        }
+        .calendar-day-header {
+            background: #f8f9fa;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .event {
+            background: #e3f2fd;
+            padding: 4px;
+            margin: 2px 0;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .today {
+            background: #fff3cd;
+        }
+        .other-month {
+            background: #f8f9fa;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="calendar-header">
+            <h1>Kalender Reservasi</h1>
+            <div class="calendar-nav">
+                <button class="btn">Hari Ini</button>
+                <button class="btn">Bulan Sebelumnya</button>
+                <button class="btn">Bulan Selanjutnya</button>
+            </div>
+        </div>
+
+        <div class="calendar">
+            <div class="calendar-day-header">Minggu</div>
+            <div class="calendar-day-header">Senin</div>
+            <div class="calendar-day-header">Selasa</div>
+            <div class="calendar-day-header">Rabu</div>
+            <div class="calendar-day-header">Kamis</div>
+            <div class="calendar-day-header">Jumat</div>
+            <div class="calendar-day-header">Sabtu</div>
+
+            <!-- Hari-hari bulan sebelumnya -->
+            <div class="calendar-day other-month">28</div>
+            <div class="calendar-day other-month">29</div>
+            <div class="calendar-day other-month">30</div>
+            <div class="calendar-day other-month">31</div>
+
+            <!-- Hari-hari bulan ini -->
+            <div class="calendar-day">1</div>
+            <div class="calendar-day">2</div>
+            <div class="calendar-day">3</div>
+            <div class="calendar-day">4</div>
+            <div class="calendar-day">5</div>
+            <div class="calendar-day">6</div>
+            <div class="calendar-day">7</div>
+            <div class="calendar-day">8</div>
+            <div class="calendar-day">9</div>
+            <div class="calendar-day">10</div>
+            <div class="calendar-day">11</div>
+            <div class="calendar-day">12</div>
+            <div class="calendar-day">13</div>
+            <div class="calendar-day">14</div>
+            <div class="calendar-day">15</div>
+            <div class="calendar-day">16</div>
+            <div class="calendar-day">17</div>
+            <div class="calendar-day">18</div>
+            <div class="calendar-day">19</div>
+            <div class="calendar-day">20</div>
+            <div class="calendar-day">21</div>
+            <div class="calendar-day">22</div>
+            <div class="calendar-day">23</div>
+            <div class="calendar-day">24</div>
+            <div class="calendar-day">25</div>
+            <div class="calendar-day">26</div>
+            <div class="calendar-day">27</div>
+            <div class="calendar-day">28</div>
+            <div class="calendar-day">29</div>
+            <div class="calendar-day">30</div>
+            <div class="calendar-day">31</div>
+
+            <!-- Contoh event -->
+            <div class="calendar-day">
+                15
+                <div class="event">Rapat Tim (09:00)</div>
+                <div class="event">Presentasi (14:00)</div>
+            </div>
+            <div class="calendar-day today">
+                20
+                <div class="event">Meeting Client (10:00)</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

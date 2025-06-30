@@ -3,7 +3,7 @@ skinparam classAttributeIconSize 0
 
 class Pegawai {
   +id: int
-  +nip: string
+  +nip: int
   +password: string
   +nama: string
   +no_wa: string
@@ -12,7 +12,7 @@ class Pegawai {
 
 class PengajuanAkun {
   +id: int
-  +nip: string
+  +nip: int
   +nama: string
   +no_wa: string
   +isi_surat: text
@@ -23,7 +23,7 @@ class PengajuanAkun {
 
 class Reservasi {
   +id: int
-  +nip: string
+  +nip: int
   +ruangan: string
   +tanggal: date
   +waktu_mulai: time

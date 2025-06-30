@@ -7,7 +7,7 @@ skinparam classAttributeIconSize 0
 
 table(Pegawai) {
   primary_key(id): INT
-  nip: VARCHAR(18)
+  nip: int(18)
   password: VARCHAR(100)
   nama: VARCHAR(100)
   no_wa: VARCHAR(20)
@@ -16,7 +16,7 @@ table(Pegawai) {
 
 table(PengajuanAkun) {
   primary_key(id): INT
-  foreign_key(nip): VARCHAR(18)
+  foreign_key(nip): int(18)
   nama: VARCHAR(100)
   no_wa: VARCHAR(20)
   isi_surat: TEXT
@@ -27,7 +27,7 @@ table(PengajuanAkun) {
 
 table(Reservasi) {
   primary_key(id): INT
-  foreign_key(nip): VARCHAR(20)
+  foreign_key(nip): int(18)
   ruangan: VARCHAR(100)
   tanggal: DATE
   waktu_mulai: TIME

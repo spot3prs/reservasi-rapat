@@ -79,6 +79,17 @@
     }
 </style>
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show" role="alert" style="margin-top: 20px;">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
 <div class="profile-card">
     <div class="card-header">
         <h2>Profil Pengguna</h2>
@@ -127,4 +138,4 @@
         </form>
     </div>
 </div>
-{% endblock %} 
+{% endblock %}
